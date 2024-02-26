@@ -1,4 +1,4 @@
-# Jura
+# jura
 A small lightweight text editor like nano.
 
 # Usage
