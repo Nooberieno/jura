@@ -6,6 +6,10 @@ Type ./jura and then the file you wish to edit.
 
 Use the arrows to traverse the lines.
 
+Use ctrl-S to save a file.
+
+Use ctrl-Q to quit.
+
 # Installation Guide
 Clone the repository and open the folder in the terminal.
 
