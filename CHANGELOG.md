@@ -2,4 +2,4 @@
 Basic terminal text editor with saving functionality
 
 # 1.1
-Very basic searching
+Very basic searching using Ctrl-F keybind

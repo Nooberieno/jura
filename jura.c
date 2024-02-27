@@ -370,7 +370,7 @@ void Find(){
 		char *match = strstr(line->render, query);
 		if(match){
 			config.y = i;
-			config.x = RowrenderxToCx(line, match - line->render);
+			config.x = LineRenderxToX(line, match - line->render);
 			config.offline = config.numlines;
 			break;
 		}
@@ -403,7 +403,7 @@ void abFree(struct buffer *buff){
 void Scroll(){
 	config.renderx = 0;
 	if(config.y < config.numlines){
-		config.renderx = RowXToRenderx(&config.line[config.y], config.x);
+		config.renderx = LineXToRenderx(&config.line[config.y], config.x);
 	}
 	if(config.y < config.offline){
 		config.offline = config.y;
