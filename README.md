@@ -30,7 +30,7 @@ Type cc jura.c -o jura -Wall -Wextra -pedantic -std=c99 in to the terminal.
 You should now be able to replicate the usage.
 
 # Installation Guide Arch Linux
-jura is availlable on the aur as jura
+jura is availlable on the AUR as jura
 
 You can also follow the regular installation
 
