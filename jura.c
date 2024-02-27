@@ -17,7 +17,7 @@
 
 /* defines */
 
-#define CurrentJuraVersion "1.0"
+#define CurrentJuraVersion "1.1"
 #define JuraTabStop 8
 #define JuraQuit 1
 #define CTRL_KEY(k) ((k) & 0x1f)
