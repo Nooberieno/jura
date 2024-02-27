@@ -12,6 +12,10 @@ Use ctrl-S to save a file.
 
 Use ctrl-Q to quit.
 
+Use ctrl-F to search. 
+
+When searching press enter to go to the first match found
+
 # Installation Guide Non-Arch Linux
 Clone the repository and open the folder in the terminal.
 
