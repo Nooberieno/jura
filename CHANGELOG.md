@@ -6,4 +6,5 @@ Very basic searching using Ctrl-F keybind
 
 # 1.2
 Expanded search to incremental search
+
 This means the cursor updates when a new match is found
