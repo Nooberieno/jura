@@ -2,7 +2,7 @@
 A small lightweight text editor like nano.
 
 # Usage
-Type ./jura "filename" note that this only works in the folder the binary is located in to change this, download jura from the AUR or follow the Extras guide.
+Type ./jura "filename" note that this only works in the folder the binary is located in. to change this behaviour download jura from the AUR or follow the Extras guide.
 
 If you downloaded jura from the AUR or follow the Extras guide you should be able to type jura "filename"
 
