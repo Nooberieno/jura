@@ -17,9 +17,9 @@
 
 /* defines */
 
-#define CurrentJuraVersion "1.1"
+#define CurrentJuraVersion "1.2"
 #define JuraTabStop 8
-#define JuraQuit 1
+#define JuraQuitTimes 1
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 enum Key{
@@ -37,7 +37,7 @@ enum Key{
 
 typedef struct editorline{
 	int size;
-	int rendersize;
+	int rsize;
 	char *chars;
 	char *render;
 }eline;
@@ -46,9 +46,9 @@ struct Config{
 	int x, y;
 	int renderx;
 	int offline;
-	int coloff;
+	int columoff;
 	int screenlines;
-	int screencols;
+	int screencolums;
 	int numlines;
 	eline *line;
 	int mod;
@@ -64,7 +64,7 @@ struct Config config;
 
 void SetStatusMessage(const char *fmt, ...);
 void RefreshScreen();
-char *Prompt(char *prompt);
+char *Prompt(char *prompt, void (*callback)(char *, int));
 
 /* terminal */
 
@@ -94,10 +94,10 @@ void enableRawMode(){
 }
 
 int ReadKey(){
-	int lees;
+	int nread;
 	char c;
-	while((lees=read(STDIN_FILENO, &c, 1)) != 1){
-		if(lees == -1 && errno != EAGAIN) die("read");
+	while((nread=read(STDIN_FILENO, &c, 1)) != 1){
+		if(nread == -1 && errno != EAGAIN) die("read");
 	}
 	if(c == '\x1b'){
 		char seq[3];
@@ -128,7 +128,7 @@ int ReadKey(){
 	}
 }
 
-int getCursorPosition(int *rows, int *cols){
+int getCursorPosition(int *lines, int *cols){
 	char buf[32];
 	unsigned int i = 0;
 	if(write(STDOUT_FILENO, "\x1b[6n", 4) != 4) return -1;
@@ -139,7 +139,7 @@ int getCursorPosition(int *rows, int *cols){
 	}
 	buf[i] = '\0';
 	if(buf[0] != '\x1b' || buf[1] != '[') return -1;
-	if(sscanf(&buf[2], "%d;%d", rows, cols) != 2) return -1;
+	if(sscanf(&buf[2], "%d;%d", lines, cols) != 2) return -1;
 	return 0;
 }
 
@@ -155,17 +155,17 @@ int getWindowSize(int *lines, int *cols){
 	}
 }
 
-/* line operations */
+/* row operations */
 
-int LineXToRenderx(eline *line, int cx){
-	int renderx = 0;
+int LineXToRenderX(eline *line, int cx){
+	int rx = 0;
 	int j;
 	for(j = 0; j < cx; j++){
 		if(line->chars[j] == '\t')
-			renderx += (JuraTabStop - 1) - (renderx % JuraTabStop);
-		renderx++;
+			rx += (JuraTabStop - 1) - (rx % JuraTabStop);
+		rx++;
 	}
-	return renderx;
+	return rx;
 }
 
 int LineRenderxToX(eline *line, int renderx){
@@ -175,12 +175,12 @@ int LineRenderxToX(eline *line, int renderx){
 		if(line->chars[x] == '\t')
 			cur_renderx += (JuraTabStop -1) - (cur_renderx % JuraTabStop);
 		cur_renderx++;
-		if(cur_renderx > renderx) return x;
+		if(cur_renderx > renderx) return renderx;
 	}
 	return x;
 }
 
-void UpdateLine(eline *line){
+void updateLine(eline *line){
 	int tabs = 0;
 	int j;
 	for(j = 0; j < line->size; j++)
@@ -197,7 +197,7 @@ void UpdateLine(eline *line){
 		}
 	}
 	line->render[idx] = '\0';
-	line->rendersize = idx;
+	line->rsize = idx;
 }
 
 void InsertLine(int at, char *s, size_t len){
@@ -208,9 +208,9 @@ void InsertLine(int at, char *s, size_t len){
 	config.line[at].chars = malloc(len + 1);
 	memcpy(config.line[at].chars, s, len);
 	config.line[at].chars[len] = '\0';
-	config.line[at].rendersize = 0;
+	config.line[at].rsize = 0;
 	config.line[at].render = NULL;
-	UpdateLine(&config.line[at]);
+	updateLine(&config.line[at]);
 	config.numlines++;
 	config.mod++;
 }
@@ -234,7 +234,7 @@ void LineInsertChar(eline *line, int at, int c){
 	memmove(&line->chars[at + 1], &line->chars[at], line->size - at + 1);
 	line->size++;
 	line->chars[at] = c;
-	UpdateLine(line);
+	updateLine(line);
 	config.mod++;
 }
 
@@ -243,7 +243,7 @@ void LineAppendString(eline *line, char *s, size_t len){
 	memcpy(&line->chars[line->size], s, len);
 	line->size +=len;
 	line->chars[line->size] = '\0';
-	UpdateLine(line);
+	updateLine(line);
 	config.mod++;
 }
 
@@ -251,7 +251,7 @@ void LineRemoveChar(eline *line, int at){
 	if(at < 0 || at >= line->size) return;
 	memmove(&line->chars[at], &line->chars[at + 1], line->size - at);
 	line->size--;
-	UpdateLine(line);
+	updateLine(line);
 	config.mod++;
 }
 
@@ -274,7 +274,7 @@ void InsertNewline(){
 		line = &config.line[config.y];
 		line->size = config.x;
 		line->chars[line->size] = '\0';
-		UpdateLine(line);
+		updateLine(line);
 	}
 	config.y++;
 	config.x = 0;
@@ -334,7 +334,7 @@ void Open(char *filename){
 
 void Save(){
 	if(config.filename == NULL){
-		config.filename = Prompt("Save as: %s (ESC to cancel)");
+		config.filename = Prompt("Save as: %s (ESC to cancel)", NULL);
 		if(config.filename == NULL){
 			SetStatusMessage("Save aborted");
 			return;
@@ -361,9 +361,10 @@ void Save(){
 
 /* find */
 
-void Find(){
-	char *query = Prompt("Search: %s (ESC to cancel)");
-	if(query == NULL) return;
+void FindCallback(char *query, int key){
+	if(key == '\r' || key == '\x1b'){
+		return;
+	}
 	int i;
 	for(i = 0; i < config.numlines; i++){
 		eline *line = &config.line[i];
@@ -375,7 +376,13 @@ void Find(){
 			break;
 		}
 	}
-	free(query);
+}
+
+void Find(){
+	char *query = Prompt("Search: %s (ESC to cancel)", FindCallback);
+	if(query){
+		free(query);
+	}
 }
 
 /* append buffer */
@@ -384,7 +391,7 @@ struct buffer{
 	char *b;
 	int len;
 };
-#define BufferStart {NULL, 0}
+#define StartBuffer {NULL, 0}
 
 void AttachBuffer(struct buffer *buff, const char *s, int len){
 	char *new = realloc(buff->b, buff->len + len);
@@ -394,7 +401,7 @@ void AttachBuffer(struct buffer *buff, const char *s, int len){
 	buff->len += len;
 }
 
-void abFree(struct buffer *buff){
+void FreeBuffer(struct buffer *buff){
 	free(buff->b);
 }
 
@@ -403,7 +410,7 @@ void abFree(struct buffer *buff){
 void Scroll(){
 	config.renderx = 0;
 	if(config.y < config.numlines){
-		config.renderx = LineXToRenderx(&config.line[config.y], config.x);
+		config.renderx = LineXToRenderX(&config.line[config.y], config.x);
 	}
 	if(config.y < config.offline){
 		config.offline = config.y;
@@ -411,11 +418,11 @@ void Scroll(){
 	if(config.y >= config.offline + config.screenlines){
 		config.offline = config.y - config.screenlines + 1;
 	}
-	if(config.renderx < config.coloff){
-		config.coloff = config.renderx;
+	if(config.renderx < config.columoff){
+		config.columoff = config.renderx;
 	}
-	if(config.renderx >= config.coloff + config.screencols){
-		config.coloff = config.renderx - config.screencols + 1;
+	if(config.renderx >= config.columoff + config.screencolums){
+		config.columoff = config.renderx - config.screencolums + 1;
 	}
 }
 
@@ -427,21 +434,21 @@ void DrawLines(struct buffer *buff){
 		if(config.numlines == 0 && y == config.screenlines/3){
 			char welcome[80];
 			int welkom = snprintf(welcome, sizeof(welcome), "jura  -- version %s", CurrentJuraVersion);
-			if(welkom > config.screencols) welkom = config.screencols;
-			int padding = (config.screencols - welkom) / 2;
+			if(welkom > config.screencolums) welkom = config.screencolums;
+			int padding = (config.screencolums - welkom) / 2;
 			if(padding){
-				AttachBuffer(buff, "~", 1);
+				AttachBuffer(buff, "-", 1);
 				padding--;
 			}
 			while(padding--) AttachBuffer(buff, " ", 1);
 			AttachBuffer(buff, welcome, welkom);
 		}else {
-		AttachBuffer(buff, "~", 1);
+		AttachBuffer(buff, "-", 1);
 		}
 		}else{
-			int len = config.line[filerow].rendersize - config.coloff;
+			int len = config.line[filerow].rsize - config.columoff;
 			if(len < 0) len = 0;
-			AttachBuffer(buff, &config.line[filerow].render[config.coloff], len);
+			AttachBuffer(buff, &config.line[filerow].render[config.columoff], len);
 		}
 		AttachBuffer(buff, "\x1b[K", 3);
 			AttachBuffer(buff, "\r\n", 2);
@@ -453,10 +460,10 @@ void DrawStatusBar(struct buffer *buff){
 	char status[80], rstatus[80];
 	int len = snprintf(status, sizeof(status), "%.20s - %d lines %s", config.filename ? config.filename : "[No Name]", config.numlines, config.mod ? "(modified)" : "");
 	int rlen = snprintf(rstatus, sizeof(rstatus), "%d/%d", config.y + 1, config.numlines);
-	if(len > config.screencols) len = config.screencols;
+	if(len > config.screencolums) len = config.screencolums;
 	AttachBuffer(buff, status, len);
-	while(len < config.screencols){
-		if(config.screencols - len == rlen){
+	while(len < config.screencolums){
+		if(config.screencolums - len == rlen){
 			AttachBuffer(buff, rstatus, rlen);
 			break;
 		}else{
@@ -471,25 +478,25 @@ void DrawStatusBar(struct buffer *buff){
 void DrawMessageBar(struct buffer *buff){
 	AttachBuffer(buff, "\x1b[K", 3);
 	int msglen = strlen(config.statusmsg);
-	if(msglen > config.screencols) msglen = config.screencols;
+	if(msglen > config.screencolums) msglen = config.screencolums;
 	if(msglen && time(NULL) - config.statusmsg_time < 5)
 		AttachBuffer(buff, config.statusmsg, msglen);
 }
 
 void RefreshScreen(){
 	Scroll();
-	struct buffer ab = BufferStart;
-	AttachBuffer(&ab, "\x1b[?25l", 6);
-	AttachBuffer(&ab, "\x1b[H", 3);
-	DrawLines(&ab);
-	DrawStatusBar(&ab);
-	DrawMessageBar(&ab);
+	struct buffer buff = StartBuffer;
+	AttachBuffer(&buff, "\x1b[?25l", 6);
+	AttachBuffer(&buff, "\x1b[H", 3);
+	DrawLines(&buff);
+	DrawStatusBar(&buff);
+	DrawMessageBar(&buff);
 	char buf[32];
-	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (config.y - config.offline) + 1, (config.renderx - config.coloff) + 1);
-	AttachBuffer(&ab, buf, strlen(buf));
-	AttachBuffer(&ab, "\x1b[?25h", 6);
-	write(STDOUT_FILENO, ab.b, ab.len);
-	abFree(&ab);
+	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (config.y - config.offline) + 1, (config.renderx - config.columoff) + 1);
+	AttachBuffer(&buff, buf, strlen(buf));
+	AttachBuffer(&buff, "\x1b[?25h", 6);
+	write(STDOUT_FILENO, buff.b, buff.len);
+	FreeBuffer(&buff);
 }
 
 void SetStatusMessage(const char *fmt, ...){
@@ -502,7 +509,7 @@ void SetStatusMessage(const char *fmt, ...){
 
 /* input */
 
-char *Prompt(char *prompt){
+char *Prompt(char *prompt, void(*callback)(char *, int)){
 	size_t bufsize = 128;
 	char *buf = malloc(bufsize);
 	size_t buflen = 0;
@@ -515,11 +522,13 @@ char *Prompt(char *prompt){
 			if(buflen != 0) buf[--buflen] = '\0';
 		}else if(c == '\x1b'){
 			SetStatusMessage("");
+			if(callback) callback(buf, c);
 			free(buf);
 			return NULL;
 		}else if(c == '\r'){
 			if(buflen != 0){
 				SetStatusMessage("");
+				if(callback) callback(buf, c);
 				return buf;
 			}
 		}else if(!iscntrl(c) && c < 128){
@@ -530,6 +539,7 @@ char *Prompt(char *prompt){
 			buf[buflen++] = c;
 			buf[buflen] = '\0';
 		}
+		if(callback) callback(buf, c);
 	}
 }
 
@@ -571,7 +581,7 @@ void MoveCursor(int key){
 }
 
 void ProcessKeypress(){
-	static int quit_times = JuraQuit;
+	static int quit_times = JuraQuitTimes;
 	int c = ReadKey();
 	switch (c){
 	case '\r':
@@ -589,9 +599,11 @@ void ProcessKeypress(){
 		break;
 	case CTRL_KEY('s'):
 		Save();
+		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
 		break;
 	case CTRL_KEY('f'):
 		Find();
+		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
 		break;
 	case BACKSPACE:
 	case CTRL_KEY('h'):
@@ -607,7 +619,7 @@ void ProcessKeypress(){
 			}else if(c == PAGE_DOWN){
 				config.y = config.offline + config.screenlines - 1;
 			}
-			int times = config.screencols;
+			int times = config.screencolums;
 			while(times--)
 				MoveCursor(c == PAGE_UP ? ARROW_UP : ARROW_DOWN);
 		}
@@ -625,7 +637,7 @@ void ProcessKeypress(){
 		InsertChar(c);
 		break;
 	}
-	quit_times = JuraQuit;
+	quit_times = JuraQuitTimes;
 }
 
 /* init */
@@ -635,14 +647,14 @@ void init(){
 	config.y = 0;
 	config.renderx = 0;
 	config.offline = 0;
-	config.coloff = 0;
+	config.columoff = 0;
 	config.numlines = 0;
 	config.line = NULL;
 	config.mod = 0;
 	config.filename = NULL;
 	config.statusmsg[0] = '\0';
 	config.statusmsg_time = 0;
-	if (getWindowSize(&config.screenlines, &config.screencols) == -1) die("getWindowSize");
+	if (getWindowSize(&config.screenlines, &config.screencolums) == -1) die("getWindowSize");
 	config.screenlines -= 2;
 }
 
