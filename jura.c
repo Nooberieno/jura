@@ -627,9 +627,11 @@ void ProcessKeypress(){
 		break;
 	case CTRL_KEY('s'):
 		Save();
+		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
 		break;
 	case CTRL_KEY('f'):
 		Find();
+		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
 		break;
 	case BACKSPACE:
 	case CTRL_KEY('h'):
