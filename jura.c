@@ -17,7 +17,7 @@
 
 /* defines */
 
-#define CurrentJuraVersion "1.2"
+#define CurrentJuraVersion "1.3"
 #define JuraTabStop 8
 #define JuraQuitTimes 1
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -35,7 +35,7 @@ enum Key{
 
 /* data */
 
-typedef struct editorline{
+typedef struct eline{
 	int size;
 	int rsize;
 	char *chars;
@@ -46,9 +46,9 @@ struct Config{
 	int x, y;
 	int renderx;
 	int offline;
-	int columoff;
+	int coloff;
 	int screenlines;
-	int screencolums;
+	int screencols;
 	int numlines;
 	eline *line;
 	int mod;
@@ -155,17 +155,17 @@ int getWindowSize(int *lines, int *cols){
 	}
 }
 
-/* row operations */
+/* line operations */
 
-int LineXToRenderX(eline *line, int cx){
-	int rx = 0;
+int LineXToRenderx(eline *line, int x){
+	int renderx = 0;
 	int j;
-	for(j = 0; j < cx; j++){
+	for(j = 0; j < x; j++){
 		if(line->chars[j] == '\t')
-			rx += (JuraTabStop - 1) - (rx % JuraTabStop);
-		rx++;
+			renderx += (JuraTabStop - 1) - (renderx % JuraTabStop);
+		renderx++;
 	}
-	return rx;
+	return renderx;
 }
 
 int LineRenderxToX(eline *line, int renderx){
@@ -175,12 +175,12 @@ int LineRenderxToX(eline *line, int renderx){
 		if(line->chars[x] == '\t')
 			cur_renderx += (JuraTabStop -1) - (cur_renderx % JuraTabStop);
 		cur_renderx++;
-		if(cur_renderx > renderx) return renderx;
+		if(cur_renderx > renderx) return x;
 	}
 	return x;
 }
 
-void updateLine(eline *line){
+void UpdateLIne(eline *line){
 	int tabs = 0;
 	int j;
 	for(j = 0; j < line->size; j++)
@@ -200,7 +200,7 @@ void updateLine(eline *line){
 	line->rsize = idx;
 }
 
-void InsertLine(int at, char *s, size_t len){
+void InsertLIne(int at, char *s, size_t len){
 	if(at < 0 || at > config.numlines) return;
 	config.line = realloc(config.line, sizeof(eline) * (config.numlines + 1));
 	memmove(&config.line[at + 1], &config.line[at], sizeof(eline) * (config.numlines - at));
@@ -210,7 +210,7 @@ void InsertLine(int at, char *s, size_t len){
 	config.line[at].chars[len] = '\0';
 	config.line[at].rsize = 0;
 	config.line[at].render = NULL;
-	updateLine(&config.line[at]);
+	UpdateLIne(&config.line[at]);
 	config.numlines++;
 	config.mod++;
 }
@@ -234,7 +234,7 @@ void LineInsertChar(eline *line, int at, int c){
 	memmove(&line->chars[at + 1], &line->chars[at], line->size - at + 1);
 	line->size++;
 	line->chars[at] = c;
-	updateLine(line);
+	UpdateLIne(line);
 	config.mod++;
 }
 
@@ -243,7 +243,7 @@ void LineAppendString(eline *line, char *s, size_t len){
 	memcpy(&line->chars[line->size], s, len);
 	line->size +=len;
 	line->chars[line->size] = '\0';
-	updateLine(line);
+	UpdateLIne(line);
 	config.mod++;
 }
 
@@ -251,7 +251,7 @@ void LineRemoveChar(eline *line, int at){
 	if(at < 0 || at >= line->size) return;
 	memmove(&line->chars[at], &line->chars[at + 1], line->size - at);
 	line->size--;
-	updateLine(line);
+	UpdateLIne(line);
 	config.mod++;
 }
 
@@ -259,7 +259,7 @@ void LineRemoveChar(eline *line, int at){
 
 void InsertChar(int c){
 	if(config.y == config.numlines){
-		InsertLine(config.numlines, "", 0);
+		InsertLIne(config.numlines, "", 0);
 	}
 	LineInsertChar(&config.line[config.y], config.x, c);
 	config.x++;
@@ -267,14 +267,14 @@ void InsertChar(int c){
 
 void InsertNewline(){
 	if(config.x==0){
-		InsertLine(config.y, "", 0);
+		InsertLIne(config.y, "", 0);
 	}else{
 		eline *line = &config.line[config.y];
-		InsertLine(config.y + 1, &line->chars[config.x], line->size - config.x);
+		InsertLIne(config.y + 1, &line->chars[config.x], line->size - config.x);
 		line = &config.line[config.y];
 		line->size = config.x;
 		line->chars[line->size] = '\0';
-		updateLine(line);
+		UpdateLIne(line);
 	}
 	config.y++;
 	config.x = 0;
@@ -325,7 +325,7 @@ void Open(char *filename){
 	while((lijnen = getline(&line, &linecap, fp)) != -1){
 		while(lijnen > 0 && (line[lijnen - 1] == '\n' || line[lijnen - 1] == '\r'))
 			lijnen--;
-		InsertLine(config.numlines, line, lijnen);
+		InsertLIne(config.numlines, line, lijnen);
 	}
 	free(line);
 	fclose(fp);
@@ -379,9 +379,18 @@ void FindCallback(char *query, int key){
 }
 
 void Find(){
+	int saved_cx = config.x;
+	int saved_cy = config.y;
+	int saved_coloff = config.coloff;
+	int saved_offline = config.offline;
 	char *query = Prompt("Search: %s (ESC to cancel)", FindCallback);
 	if(query){
 		free(query);
+	}else {
+		config.x = saved_cx;
+		config.y = saved_cy;
+		config.coloff = saved_coloff;
+		config.offline = saved_offline;
 	}
 }
 
@@ -410,7 +419,7 @@ void FreeBuffer(struct buffer *buff){
 void Scroll(){
 	config.renderx = 0;
 	if(config.y < config.numlines){
-		config.renderx = LineXToRenderX(&config.line[config.y], config.x);
+		config.renderx = LineXToRenderx(&config.line[config.y], config.x);
 	}
 	if(config.y < config.offline){
 		config.offline = config.y;
@@ -418,11 +427,11 @@ void Scroll(){
 	if(config.y >= config.offline + config.screenlines){
 		config.offline = config.y - config.screenlines + 1;
 	}
-	if(config.renderx < config.columoff){
-		config.columoff = config.renderx;
+	if(config.renderx < config.coloff){
+		config.coloff = config.renderx;
 	}
-	if(config.renderx >= config.columoff + config.screencolums){
-		config.columoff = config.renderx - config.screencolums + 1;
+	if(config.renderx >= config.coloff + config.screencols){
+		config.coloff = config.renderx - config.screencols + 1;
 	}
 }
 
@@ -434,8 +443,8 @@ void DrawLines(struct buffer *buff){
 		if(config.numlines == 0 && y == config.screenlines/3){
 			char welcome[80];
 			int welkom = snprintf(welcome, sizeof(welcome), "jura  -- version %s", CurrentJuraVersion);
-			if(welkom > config.screencolums) welkom = config.screencolums;
-			int padding = (config.screencolums - welkom) / 2;
+			if(welkom > config.screencols) welkom = config.screencols;
+			int padding = (config.screencols - welkom) / 2;
 			if(padding){
 				AttachBuffer(buff, "-", 1);
 				padding--;
@@ -446,9 +455,9 @@ void DrawLines(struct buffer *buff){
 		AttachBuffer(buff, "-", 1);
 		}
 		}else{
-			int len = config.line[filerow].rsize - config.columoff;
+			int len = config.line[filerow].rsize - config.coloff;
 			if(len < 0) len = 0;
-			AttachBuffer(buff, &config.line[filerow].render[config.columoff], len);
+			AttachBuffer(buff, &config.line[filerow].render[config.coloff], len);
 		}
 		AttachBuffer(buff, "\x1b[K", 3);
 			AttachBuffer(buff, "\r\n", 2);
@@ -460,10 +469,10 @@ void DrawStatusBar(struct buffer *buff){
 	char status[80], rstatus[80];
 	int len = snprintf(status, sizeof(status), "%.20s - %d lines %s", config.filename ? config.filename : "[No Name]", config.numlines, config.mod ? "(modified)" : "");
 	int rlen = snprintf(rstatus, sizeof(rstatus), "%d/%d", config.y + 1, config.numlines);
-	if(len > config.screencolums) len = config.screencolums;
+	if(len > config.screencols) len = config.screencols;
 	AttachBuffer(buff, status, len);
-	while(len < config.screencolums){
-		if(config.screencolums - len == rlen){
+	while(len < config.screencols){
+		if(config.screencols - len == rlen){
 			AttachBuffer(buff, rstatus, rlen);
 			break;
 		}else{
@@ -478,7 +487,7 @@ void DrawStatusBar(struct buffer *buff){
 void DrawMessageBar(struct buffer *buff){
 	AttachBuffer(buff, "\x1b[K", 3);
 	int msglen = strlen(config.statusmsg);
-	if(msglen > config.screencolums) msglen = config.screencolums;
+	if(msglen > config.screencols) msglen = config.screencols;
 	if(msglen && time(NULL) - config.statusmsg_time < 5)
 		AttachBuffer(buff, config.statusmsg, msglen);
 }
@@ -492,7 +501,7 @@ void RefreshScreen(){
 	DrawStatusBar(&buff);
 	DrawMessageBar(&buff);
 	char buf[32];
-	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (config.y - config.offline) + 1, (config.renderx - config.columoff) + 1);
+	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (config.y - config.offline) + 1, (config.renderx - config.coloff) + 1);
 	AttachBuffer(&buff, buf, strlen(buf));
 	AttachBuffer(&buff, "\x1b[?25h", 6);
 	write(STDOUT_FILENO, buff.b, buff.len);
@@ -619,7 +628,7 @@ void ProcessKeypress(){
 			}else if(c == PAGE_DOWN){
 				config.y = config.offline + config.screenlines - 1;
 			}
-			int times = config.screencolums;
+			int times = config.screencols;
 			while(times--)
 				MoveCursor(c == PAGE_UP ? ARROW_UP : ARROW_DOWN);
 		}
@@ -647,14 +656,14 @@ void init(){
 	config.y = 0;
 	config.renderx = 0;
 	config.offline = 0;
-	config.columoff = 0;
+	config.coloff = 0;
 	config.numlines = 0;
 	config.line = NULL;
 	config.mod = 0;
 	config.filename = NULL;
 	config.statusmsg[0] = '\0';
 	config.statusmsg_time = 0;
-	if (getWindowSize(&config.screenlines, &config.screencolums) == -1) die("getWindowSize");
+	if (getWindowSize(&config.screenlines, &config.screencols) == -1) die("getWindowSize");
 	config.screenlines -= 2;
 }
 
