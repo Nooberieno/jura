@@ -35,7 +35,7 @@ jura is availlable on the AUR as jura
 You can also follow the regular installation
 
 # Extras
-If you want to have acces to jura from anywhere you need to adds it path to your .bashrc file.
+If you want to have acces to jura from anywhere you need to add it path to your .bashrc file.
 
 Locate your .bashrc file(usually located in your home folder).
 
