@@ -1,3 +1,5 @@
+/* includes */
+
 #define _DEFAULT_SOURCE
 #define _BSD_SOURCE
 #define _GNU_SOURCE
@@ -17,7 +19,7 @@
 
 /* defines */
 
-#define CurrentJuraVersion "1.3"
+#define CurrentJuraVersion "1.4"
 #define JuraTabStop 8
 #define JuraQuitTimes 1
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -180,7 +182,7 @@ int LineRenderxToX(eline *line, int renderx){
 	return x;
 }
 
-void UpdateLIne(eline *line){
+void UpdateLine(eline *line){
 	int tabs = 0;
 	int j;
 	for(j = 0; j < line->size; j++)
@@ -200,7 +202,7 @@ void UpdateLIne(eline *line){
 	line->rsize = idx;
 }
 
-void InsertLIne(int at, char *s, size_t len){
+void InsertLine(int at, char *s, size_t len){
 	if(at < 0 || at > config.numlines) return;
 	config.line = realloc(config.line, sizeof(eline) * (config.numlines + 1));
 	memmove(&config.line[at + 1], &config.line[at], sizeof(eline) * (config.numlines - at));
@@ -210,7 +212,7 @@ void InsertLIne(int at, char *s, size_t len){
 	config.line[at].chars[len] = '\0';
 	config.line[at].rsize = 0;
 	config.line[at].render = NULL;
-	UpdateLIne(&config.line[at]);
+	UpdateLine(&config.line[at]);
 	config.numlines++;
 	config.mod++;
 }
@@ -234,7 +236,7 @@ void LineInsertChar(eline *line, int at, int c){
 	memmove(&line->chars[at + 1], &line->chars[at], line->size - at + 1);
 	line->size++;
 	line->chars[at] = c;
-	UpdateLIne(line);
+	UpdateLine(line);
 	config.mod++;
 }
 
@@ -243,7 +245,7 @@ void LineAppendString(eline *line, char *s, size_t len){
 	memcpy(&line->chars[line->size], s, len);
 	line->size +=len;
 	line->chars[line->size] = '\0';
-	UpdateLIne(line);
+	UpdateLine(line);
 	config.mod++;
 }
 
@@ -251,7 +253,7 @@ void LineRemoveChar(eline *line, int at){
 	if(at < 0 || at >= line->size) return;
 	memmove(&line->chars[at], &line->chars[at + 1], line->size - at);
 	line->size--;
-	UpdateLIne(line);
+	UpdateLine(line);
 	config.mod++;
 }
 
@@ -259,7 +261,7 @@ void LineRemoveChar(eline *line, int at){
 
 void InsertChar(int c){
 	if(config.y == config.numlines){
-		InsertLIne(config.numlines, "", 0);
+		InsertLine(config.numlines, "", 0);
 	}
 	LineInsertChar(&config.line[config.y], config.x, c);
 	config.x++;
@@ -267,14 +269,14 @@ void InsertChar(int c){
 
 void InsertNewline(){
 	if(config.x==0){
-		InsertLIne(config.y, "", 0);
+		InsertLine(config.y, "", 0);
 	}else{
 		eline *line = &config.line[config.y];
-		InsertLIne(config.y + 1, &line->chars[config.x], line->size - config.x);
+		InsertLine(config.y + 1, &line->chars[config.x], line->size - config.x);
 		line = &config.line[config.y];
 		line->size = config.x;
 		line->chars[line->size] = '\0';
-		UpdateLIne(line);
+		UpdateLine(line);
 	}
 	config.y++;
 	config.x = 0;
@@ -325,7 +327,7 @@ void Open(char *filename){
 	while((lijnen = getline(&line, &linecap, fp)) != -1){
 		while(lijnen > 0 && (line[lijnen - 1] == '\n' || line[lijnen - 1] == '\r'))
 			lijnen--;
-		InsertLIne(config.numlines, line, lijnen);
+		InsertLine(config.numlines, line, lijnen);
 	}
 	free(line);
 	fclose(fp);
@@ -362,15 +364,32 @@ void Save(){
 /* find */
 
 void FindCallback(char *query, int key){
+	static int last_match = -1;
+	static int direction = 1;
 	if(key == '\r' || key == '\x1b'){
+		last_match = -1;
+		direction = 1;
 		return;
+	}else if(key == ARROW_RIGHT || ARROW_DOWN){
+		direction = 1;
+	}else if(key == ARROW_LEFT || ARROW_UP){
+		direction = -1;
+	}else{
+		last_match = -1;
+		direction = 1;
 	}
+	if(last_match == -1) direction = 1;
+	int current = last_match;
 	int i;
 	for(i = 0; i < config.numlines; i++){
-		eline *line = &config.line[i];
+		current += direction;
+		if(current == -1) current = config.numlines - 1;
+		else if(current == config.numlines) current = 0;
+		eline *line = &config.line[current];
 		char *match = strstr(line->render, query);
 		if(match){
-			config.y = i;
+			last_match = current;
+			config.y = current;
 			config.x = LineRenderxToX(line, match - line->render);
 			config.offline = config.numlines;
 			break;
@@ -383,7 +402,7 @@ void Find(){
 	int saved_cy = config.y;
 	int saved_coloff = config.coloff;
 	int saved_offline = config.offline;
-	char *query = Prompt("Search: %s (ESC to cancel)", FindCallback);
+	char *query = Prompt("Search: %s (ESC|Arrow keys|Enter)", FindCallback);
 	if(query){
 		free(query);
 	}else {
@@ -608,11 +627,9 @@ void ProcessKeypress(){
 		break;
 	case CTRL_KEY('s'):
 		Save();
-		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
 		break;
 	case CTRL_KEY('f'):
 		Find();
-		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
 		break;
 	case BACKSPACE:
 	case CTRL_KEY('h'):

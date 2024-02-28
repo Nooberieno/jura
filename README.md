@@ -14,8 +14,6 @@ Use ctrl-Q to quit.
 
 Use ctrl-F to search. 
 
-Use enter to confirm the search
-
 # Installation Guide Non-Arch Linux
 Clone the repository and open the folder in the terminal.
 
