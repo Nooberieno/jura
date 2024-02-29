@@ -14,3 +14,6 @@ After canceling a search the cursor goes back to the position it was in before s
 
 # 1.4
 Ability to go to next or previous search with the arrow keys
+
+# 2.0
+Syntax highlighting for digits

@@ -2,7 +2,7 @@
 A small lightweight text editor like nano.
 
 # Usage
-Type ./jura "filename" note that this only works in the folder the binary is located in. to change this behaviour download jura from the AUR or follow the Extras guide.
+Type ./jura "filename" note that this only works in the folder the binary is located in. to change this behaviour download jura from the AUR or follow the Extra Setup guide.
 
 If you downloaded jura from the AUR or follow the Extras guide you should be able to type jura "filename"
 
@@ -32,7 +32,7 @@ jura is availlable on the AUR as jura
 
 You can also follow the regular installation
 
-# Extras
+# Extra Setup
 If you want to have acces to jura from anywhere you need to add it path to your .bashrc file.
 
 Locate your .bashrc file(usually located in your home folder).
@@ -43,4 +43,11 @@ replace path/to/jura with the path to the jura binary you created in the install
 
 you should now be able to run jura anywhere instead of ./jura in the folder of the binary.
 
+# RoadMap
+for the full changelog check the CHANGELOG.md file or the version compare on the releases page.
 
+Version 1.0 focused on basic features of a terminal text editor such as Saving, Exiting and Searching.
+
+Version 2.0 will focus on syntax highlighting and filetype detection.
+
+Version 3.0 will focus on configuration.
