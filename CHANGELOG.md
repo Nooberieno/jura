@@ -17,3 +17,6 @@ Ability to go to next or previous search with the arrow keys
 
 # 2.0
 Syntax highlighting for digits
+
+# 2.1
+Highlights matches when searching with the Ctrl-F keybind

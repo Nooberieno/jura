@@ -17,9 +17,9 @@
 
 /* defines */
 
-#define JURA_VERSION "2.0"
-#define JURA_TAB_STOP 8
-#define JURA_QUIT_TIMES 1
+#define CurrentJuraVersion "2.1"
+#define JuraTabStop 8
+#define JuraQuitTimes 1
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 enum Key{
@@ -33,6 +33,12 @@ enum Key{
 	PAGE_DOWN
 };
 
+enum Highlight{
+	HL_NORMAL = 0,
+	HL_NUMBER,
+	HL_MATCH
+};
+
 /* data */
 
 typedef struct eline{
@@ -40,6 +46,7 @@ typedef struct eline{
 	int rendersize;
 	char *chars;
 	char *render;
+	unsigned char *hl;
 }eline;
 
 struct Config{
@@ -155,6 +162,27 @@ int getWindowSize(int *lines, int *cols){
 	}
 }
 
+/* syntax highlighting */
+
+void UpdateSyntax(eline *line){
+	line->hl = realloc(line->hl, line->rendersize);
+	memset(line->hl, HL_NORMAL, line->rendersize);
+	int i;
+	for(i = 0; i < line->rendersize; i++){
+		if(isdigit(line->render[i])){
+			line->hl[i] = HL_NUMBER;
+		}
+	}
+}
+
+int SyntaxToColor(int hl){
+	switch(hl){
+		case HL_NUMBER: return 31;
+		case HL_MATCH: return 34;
+		default: return 37;
+	}
+}
+
 /* line operations */
 
 int LineXToRenderx(eline *line, int x){
@@ -162,7 +190,7 @@ int LineXToRenderx(eline *line, int x){
 	int j;
 	for(j = 0; j < x; j++){
 		if(line->chars[j] == '\t')
-			renderx += (JURA_TAB_STOP - 1) - (renderx % JURA_TAB_STOP);
+			renderx += (JuraTabStop - 1) - (renderx % JuraTabStop);
 		renderx++;
 	}
 	return renderx;
@@ -173,7 +201,7 @@ int LineRenderxToX(eline *line, int renderx){
 	int x;
 	for(x = 0; x < line->size; x++){
 		if(line->chars[x] == '\t')
-			cur_renderx += (JURA_TAB_STOP -1) - (cur_renderx % JURA_TAB_STOP);
+			cur_renderx += (JuraTabStop -1) - (cur_renderx % JuraTabStop);
 		cur_renderx++;
 		if(cur_renderx > renderx) return x;
 	}
@@ -186,18 +214,19 @@ void UpdateLine(eline *line){
 	for(j = 0; j < line->size; j++)
 		if(line->chars[j] == '\t') tabs++;
 	free(line->render);
-	line->render = malloc(line->size + tabs*(JURA_TAB_STOP - 1) + 1);
+	line->render = malloc(line->size + tabs*(JuraTabStop - 1) + 1);
 	int idx = 0;
 	for(j = 0; j < line->size; j++){
 		if(line->chars[j] == '\t'){
 			line->render[idx++] = ' ';
-			while(idx % JURA_TAB_STOP != 0) line->render[idx++] = ' ';
+			while(idx % JuraTabStop != 0) line->render[idx++] = ' ';
 		}else{
 			line->render[idx++] = line->chars[j];
 		}
 	}
 	line->render[idx] = '\0';
 	line->rendersize = idx;
+	UpdateSyntax(line);
 }
 
 void InsertLine(int at, char *s, size_t len){
@@ -210,6 +239,7 @@ void InsertLine(int at, char *s, size_t len){
 	config.line[at].chars[len] = '\0';
 	config.line[at].rendersize = 0;
 	config.line[at].render = NULL;
+	config.line[at].hl = NULL;
 	UpdateLine(&config.line[at]);
 	config.numlines++;
 	config.mod++;
@@ -218,6 +248,7 @@ void InsertLine(int at, char *s, size_t len){
 void FreeLine(eline *line){
 	free(line->render);
 	free(line->chars);
+	free(line->hl);
 }
 
 void RemoveLine(int at){
@@ -255,7 +286,7 @@ void LineRemoveChar(eline *line, int at){
 	config.mod++;
 }
 
-/*  editor operations */
+/*  editors operations */
 
 void InsertChar(int c){
 	if(config.y == config.numlines){
@@ -364,6 +395,13 @@ void Save(){
 void FindCallback(char *query, int key){
 	static int last_match = -1;
 	static int direction = 1;
+	static int saved_hl_line;
+	static char *saved_hl = NULL;
+	if(saved_hl){
+		memcpy(config.line[saved_hl_line].hl, saved_hl, config.line[saved_hl_line].rendersize);
+		free(saved_hl);
+		saved_hl = NULL;
+	}
 	if(key == '\r' || key == '\x1b'){
 		last_match = -1;
 		direction = 1;
@@ -390,6 +428,10 @@ void FindCallback(char *query, int key){
 			config.y = current;
 			config.x = LineRenderxToX(line, match - line->render);
 			config.offline = config.numlines;
+			saved_hl_line = current;
+			saved_hl = malloc(line->rendersize);
+			memcpy(saved_hl, line->hl, line->rendersize);
+			memset(&line->hl[match - line->render], HL_MATCH, strlen(query));
 			break;
 		}
 	}
@@ -400,7 +442,7 @@ void Find(){
 	int saved_cy = config.y;
 	int saved_coloff = config.coloff;
 	int saved_offline = config.offline;
-	char *query = Prompt("Search: %s (ESC to cancel | Use arrow keys to search matches)", FindCallback);
+	char *query = Prompt("Search: %s (ESC|Arrow keys|Enter)", FindCallback);
 	if(query){
 		free(query);
 	}else {
@@ -427,7 +469,7 @@ void AttachBuffer(struct buffer *buff, const char *s, int len){
 	buff->len += len;
 }
 
-void FreeBuffer(struct buffer *buff){
+void abFree(struct buffer *buff){
 	free(buff->b);
 }
 
@@ -459,7 +501,7 @@ void DrawLines(struct buffer *buff){
 		if(fileline >= config.numlines){
 		if(config.numlines == 0 && y == config.screenlines/3){
 			char welcome[80];
-			int welkom = snprintf(welcome, sizeof(welcome), "jura  -- version %s", JURA_VERSION);
+			int welkom = snprintf(welcome, sizeof(welcome), "jura  -- version %s", CurrentJuraVersion);
 			if(welkom > config.screencols) welkom = config.screencols;
 			int padding = (config.screencols - welkom) / 2;
 			if(padding){
@@ -476,16 +518,28 @@ void DrawLines(struct buffer *buff){
 			if(len < 0) len = 0;
 			if(len > config.screencols) len = config.screencols;
 			char *c = &config.line[fileline].render[config.coloff];
+			unsigned char *hl = &config.line[fileline].hl[config.coloff];
+			int current_color = -1;
 			int j;
 			for(j = 0; j < len; j++){
-				if(isdigit(c[j])){
-					AttachBuffer(buff, "\x1b[31m", 5);
+				if(hl[j] == HL_NORMAL){
+					if(current_color != -1){
+						AttachBuffer(buff, "\x1b[39m", 5);
+						current_color = -1;
+					}
 					AttachBuffer(buff, &c[j], 1);
-					AttachBuffer(buff, "\x1b[39m", 5);
 				} else{
+					int color = SyntaxToColor(hl[j]);
+					if(color != current_color){
+						current_color = color;
+						char buf[16];
+						int clen = snprintf(buf, sizeof(buf), "\x1b[%dm", color);
+						AttachBuffer(buff, buf, clen);
+					}
 					AttachBuffer(buff, &c[j], 1);
 				}
 			}
+			AttachBuffer(buff, "\x1b[39m", 5);
 		}
 		AttachBuffer(buff, "\x1b[K", 3);
 			AttachBuffer(buff, "\r\n", 2);
@@ -533,7 +587,7 @@ void RefreshScreen(){
 	AttachBuffer(&buff, buf, strlen(buf));
 	AttachBuffer(&buff, "\x1b[?25h", 6);
 	write(STDOUT_FILENO, buff.b, buff.len);
-	FreeBuffer(&buff);
+	abFree(&buff);
 }
 
 void SetStatusMessage(const char *fmt, ...){
@@ -618,7 +672,7 @@ void MoveCursor(int key){
 }
 
 void ProcessKeypress(){
-	static int quit_times = JURA_QUIT_TIMES;
+	static int quit_times = JuraQuitTimes;
 	int c = ReadKey();
 	switch (c){
 	case '\r':
@@ -674,7 +728,7 @@ void ProcessKeypress(){
 		InsertChar(c);
 		break;
 	}
-	quit_times = JURA_QUIT_TIMES;
+	quit_times = JuraQuitTimes;
 }
 
 /* init */
