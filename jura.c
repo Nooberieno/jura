@@ -1,5 +1,3 @@
-/* includes */
-
 #define _DEFAULT_SOURCE
 #define _BSD_SOURCE
 #define _GNU_SOURCE
@@ -19,9 +17,9 @@
 
 /* defines */
 
-#define CurrentJuraVersion "1.4"
-#define JuraTabStop 8
-#define JuraQuitTimes 1
+#define JURA_VERSION "2.0"
+#define JURA_TAB_STOP 8
+#define JURA_QUIT_TIMES 1
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 enum Key{
@@ -39,7 +37,7 @@ enum Key{
 
 typedef struct eline{
 	int size;
-	int rsize;
+	int rendersize;
 	char *chars;
 	char *render;
 }eline;
@@ -130,7 +128,7 @@ int ReadKey(){
 	}
 }
 
-int getCursorPosition(int *lines, int *cols){
+int getCursorPosition(int lines, int *cols){
 	char buf[32];
 	unsigned int i = 0;
 	if(write(STDOUT_FILENO, "\x1b[6n", 4) != 4) return -1;
@@ -164,7 +162,7 @@ int LineXToRenderx(eline *line, int x){
 	int j;
 	for(j = 0; j < x; j++){
 		if(line->chars[j] == '\t')
-			renderx += (JuraTabStop - 1) - (renderx % JuraTabStop);
+			renderx += (JURA_TAB_STOP - 1) - (renderx % JURA_TAB_STOP);
 		renderx++;
 	}
 	return renderx;
@@ -175,7 +173,7 @@ int LineRenderxToX(eline *line, int renderx){
 	int x;
 	for(x = 0; x < line->size; x++){
 		if(line->chars[x] == '\t')
-			cur_renderx += (JuraTabStop -1) - (cur_renderx % JuraTabStop);
+			cur_renderx += (JURA_TAB_STOP -1) - (cur_renderx % JURA_TAB_STOP);
 		cur_renderx++;
 		if(cur_renderx > renderx) return x;
 	}
@@ -188,18 +186,18 @@ void UpdateLine(eline *line){
 	for(j = 0; j < line->size; j++)
 		if(line->chars[j] == '\t') tabs++;
 	free(line->render);
-	line->render = malloc(line->size + tabs*(JuraTabStop - 1) + 1);
+	line->render = malloc(line->size + tabs*(JURA_TAB_STOP - 1) + 1);
 	int idx = 0;
 	for(j = 0; j < line->size; j++){
 		if(line->chars[j] == '\t'){
 			line->render[idx++] = ' ';
-			while(idx % JuraTabStop != 0) line->render[idx++] = ' ';
+			while(idx % JURA_TAB_STOP != 0) line->render[idx++] = ' ';
 		}else{
 			line->render[idx++] = line->chars[j];
 		}
 	}
 	line->render[idx] = '\0';
-	line->rsize = idx;
+	line->rendersize = idx;
 }
 
 void InsertLine(int at, char *s, size_t len){
@@ -210,7 +208,7 @@ void InsertLine(int at, char *s, size_t len){
 	config.line[at].chars = malloc(len + 1);
 	memcpy(config.line[at].chars, s, len);
 	config.line[at].chars[len] = '\0';
-	config.line[at].rsize = 0;
+	config.line[at].rendersize = 0;
 	config.line[at].render = NULL;
 	UpdateLine(&config.line[at]);
 	config.numlines++;
@@ -257,7 +255,7 @@ void LineRemoveChar(eline *line, int at){
 	config.mod++;
 }
 
-/*  operations */
+/*  editor operations */
 
 void InsertChar(int c){
 	if(config.y == config.numlines){
@@ -402,7 +400,7 @@ void Find(){
 	int saved_cy = config.y;
 	int saved_coloff = config.coloff;
 	int saved_offline = config.offline;
-	char *query = Prompt("Search: %s (ESC|Arrow keys|Enter)", FindCallback);
+	char *query = Prompt("Search: %s (ESC to cancel | Use arrow keys to search matches)", FindCallback);
 	if(query){
 		free(query);
 	}else {
@@ -457,26 +455,37 @@ void Scroll(){
 void DrawLines(struct buffer *buff){
 	int y;
 	for (y = 0; y < config.screenlines; y++){
-		int filerow = y + config.offline;
-		if(filerow >= config.numlines){
+		int fileline = y + config.offline;
+		if(fileline >= config.numlines){
 		if(config.numlines == 0 && y == config.screenlines/3){
 			char welcome[80];
-			int welkom = snprintf(welcome, sizeof(welcome), "jura  -- version %s", CurrentJuraVersion);
+			int welkom = snprintf(welcome, sizeof(welcome), "jura  -- version %s", JURA_VERSION);
 			if(welkom > config.screencols) welkom = config.screencols;
 			int padding = (config.screencols - welkom) / 2;
 			if(padding){
-				AttachBuffer(buff, "-", 1);
+				AttachBuffer(buff, "~", 1);
 				padding--;
 			}
 			while(padding--) AttachBuffer(buff, " ", 1);
 			AttachBuffer(buff, welcome, welkom);
 		}else {
-		AttachBuffer(buff, "-", 1);
+		AttachBuffer(buff, "~", 1);
 		}
 		}else{
-			int len = config.line[filerow].rsize - config.coloff;
+			int len = config.line[fileline].rendersize - config.coloff;
 			if(len < 0) len = 0;
-			AttachBuffer(buff, &config.line[filerow].render[config.coloff], len);
+			if(len > config.screencols) len = config.screencols;
+			char *c = &config.line[fileline].render[config.coloff];
+			int j;
+			for(j = 0; j < len; j++){
+				if(isdigit(c[j])){
+					AttachBuffer(buff, "\x1b[31m", 5);
+					AttachBuffer(buff, &c[j], 1);
+					AttachBuffer(buff, "\x1b[39m", 5);
+				} else{
+					AttachBuffer(buff, &c[j], 1);
+				}
+			}
 		}
 		AttachBuffer(buff, "\x1b[K", 3);
 			AttachBuffer(buff, "\r\n", 2);
@@ -609,7 +618,7 @@ void MoveCursor(int key){
 }
 
 void ProcessKeypress(){
-	static int quit_times = JuraQuitTimes;
+	static int quit_times = JURA_QUIT_TIMES;
 	int c = ReadKey();
 	switch (c){
 	case '\r':
@@ -665,7 +674,7 @@ void ProcessKeypress(){
 		InsertChar(c);
 		break;
 	}
-	quit_times = JuraQuitTimes;
+	quit_times = JURA_QUIT_TIMES;
 }
 
 /* init */
