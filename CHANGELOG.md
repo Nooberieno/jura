@@ -25,3 +25,10 @@ Highlights matches when searching with the Ctrl-F keybind
 Changed digit highlighting to support decimals which use a '.' 
 
 Changed digit highlighting to not highlight digits that are followed by a letter, for example int32 is not highlighted but 32int is
+
+# 2.3
+File detection for files that end with the .c .h or .cpp file extension
+
+Digit highlighting is now only enabled for these files
+
+These files also have highlighting for both double and single quoted strings

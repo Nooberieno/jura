@@ -17,7 +17,7 @@
 
 /* defines */
 
-#define CurrentJuraVersion "2.2"
+#define CurrentJuraVersion "2.1"
 #define JuraTabStop 8
 #define JuraQuitTimes 1
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -35,13 +35,23 @@ enum Key{
 
 enum Highlight{
 	HL_NORMAL = 0,
+	HL_STRING,
 	HL_NUMBER,
 	HL_MATCH
 };
 
+#define HL_HIGHLIGHT_NUMBERS (1<<0)
+#define HL_HIGHLIGHT_STRINGS (1<<1)
+
 /* data */
 
-typedef struct editorline{
+struct Syntax{
+	char *filetype;
+	char **filematch;
+	int flags;
+};
+
+typedef struct eline{
 	int size;
 	int rendersize;
 	char *chars;
@@ -62,10 +72,25 @@ struct Config{
 	char *filename;
 	char statusmsg[80];
 	time_t statusmsg_time;
+	struct Syntax *syntax;
 	struct termios og_terminal;
 };
 
 struct Config config;
+
+/* filetypes */
+
+char *C_HL_extensions[] = {".c", ".h", "cpp", NULL};
+
+struct Syntax HLDB[] = {
+	{
+		"c",
+		C_HL_extensions,
+		HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS
+	},
+};
+
+#define HLDB_ENTRIES (sizeof(HLDB) / sizeof(HLDB[0]))
 
 /* prototypes */
 
@@ -171,16 +196,36 @@ int is_seperator(int c){
 void UpdateSyntax(eline *line){
 	line->hl = realloc(line->hl, line->rendersize);
 	memset(line->hl, HL_NORMAL, line->rendersize);
+	if(config.syntax == NULL) return;
 	int prev_sep = 1;
+	int in_string = 0;
 	int i = 0;
 	while(i < line->rendersize){
 		char c = line->render[i];
 		unsigned char prev_hl = (i > 0) ? line->hl[i - 1] : HL_NORMAL;
-		if((isdigit(c) && (prev_sep || prev_hl == HL_NUMBER)) || (c == '.' && prev_hl == HL_NUMBER)) {
-			line->hl[i] = HL_NUMBER;
-			i++;
-			prev_sep = 0;
-			continue;
+		if(config.syntax->flags & HL_HIGHLIGHT_STRINGS){
+			if(in_string){
+				line->hl[i] = HL_STRING;
+				if(c == in_string) in_string = 0;
+				i++;
+				prev_sep = 1;
+				continue;
+			}else{
+				if(c == '"' || c == '\''){
+					in_string = c;
+					line->hl[i] = HL_STRING;
+					i++;
+					continue;
+				}
+			}
+		}
+		if(config.syntax->flags & HL_HIGHLIGHT_NUMBERS){
+			if((isdigit(c) && (prev_sep || prev_hl == HL_NUMBER)) || (c == '.' && prev_hl == HL_NUMBER)) {
+				line->hl[i] = HL_NUMBER;
+				i++;
+				prev_sep = 0;
+				continue;
+			}
 		}
 		prev_sep = is_seperator(c);
 		i++;
@@ -189,35 +234,58 @@ void UpdateSyntax(eline *line){
 
 int SyntaxToColor(int hl){
 	switch(hl){
+		case HL_STRING: return 35;
 		case HL_NUMBER: return 31;
 		case HL_MATCH: return 34;
 		default: return 37;
 	}
 }
 
-/* line operations */
-
-int LineXToRenderx(eline *line, int x){
-	int renderx = 0;
-	int j;
-	for(j = 0; j < x; j++){
-		if(line->chars[j] == '\t')
-			renderx += (JuraTabStop - 1) - (renderx % JuraTabStop);
-		renderx++;
+void SelectSyntaxHighlight(){
+	config.syntax = NULL;
+	if(config.filename == NULL) return;
+	char *ext = strrchr(config.filename, '.');
+	for(unsigned int j = 0; j < HLDB_ENTRIES; j++){
+		struct Syntax *s = &HLDB[j];
+		unsigned int i = 0;
+		while(s->filematch[i]){
+			int is_ext = (s->filematch[i][0] == '.');
+			if((is_ext && ext && !strcmp(ext, s->filematch[i])) || (!is_ext && strstr(config.filename, s->filematch[i]))){
+				config.syntax = s;
+				int fileline;
+				for(fileline = 0; fileline < config.numlines; fileline++){
+					UpdateSyntax(&config.line[fileline]);
+				}
+				return;
+			}
+			i++;
+		}
 	}
-	return renderx;
 }
 
-int LineRenderxToX(eline *line, int renderx){
-	int cur_renderx = 0;
-	int x;
-	for(x = 0; x < line->size; x++){
-		if(line->chars[x] == '\t')
-			cur_renderx += (JuraTabStop -1) - (cur_renderx % JuraTabStop);
-		cur_renderx++;
-		if(cur_renderx > renderx) return x;
+/* line operations */
+
+int LineXToRenderx(eline *line, int cx){
+	int rx = 0;
+	int j;
+	for(j = 0; j < cx; j++){
+		if(line->chars[j] == '\t')
+			rx += (JuraTabStop - 1) - (rx % JuraTabStop);
+		rx++;
 	}
-	return x;
+	return rx;
+}
+
+int LineRenderxToX(eline *line, int rx){
+	int cur_rx = 0;
+	int cx;
+	for(cx = 0; cx < line->size; cx++){
+		if(line->chars[cx] == '\t')
+			cur_rx += (JuraTabStop -1) - (cur_rx % JuraTabStop);
+		cur_rx++;
+		if(cur_rx > rx) return cx;
+	}
+	return cx;
 }
 
 void UpdateLine(eline *line){
@@ -298,7 +366,7 @@ void LineRemoveChar(eline *line, int at){
 	config.mod++;
 }
 
-/*  editor operations */
+/*  operations */
 
 void InsertChar(int c){
 	if(config.y == config.numlines){
@@ -360,6 +428,7 @@ char *LinesToString(int *buflen){
 void Open(char *filename){
 	free(config.filename);
 	config.filename = strdup(filename);
+	SelectSyntaxHighlight();
 	FILE *fp = fopen(filename, "r");
 	if(!fp) die("fopen");
 	char *line = NULL;
@@ -382,6 +451,7 @@ void Save(){
 			SetStatusMessage("Save aborted");
 			return;
 		}
+		SelectSyntaxHighlight();
 	}
 	int len;
 	char *buf = LinesToString(&len);
@@ -562,7 +632,7 @@ void DrawStatusBar(struct buffer *buff){
 	AttachBuffer(buff, "\x1b[7m", 4);
 	char status[80], rstatus[80];
 	int len = snprintf(status, sizeof(status), "%.20s - %d lines %s", config.filename ? config.filename : "[No Name]", config.numlines, config.mod ? "(modified)" : "");
-	int rlen = snprintf(rstatus, sizeof(rstatus), "%d/%d", config.y + 1, config.numlines);
+	int rlen = snprintf(rstatus, sizeof(rstatus), "%s | %d/%d", config.syntax ? config.syntax->filetype : "no filetype", config.y + 1, config.numlines);
 	if(len > config.screencols) len = config.screencols;
 	AttachBuffer(buff, status, len);
 	while(len < config.screencols){
@@ -704,6 +774,7 @@ void ProcessKeypress(){
 		Save();
 		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
 		break;
+		break;
 	case CTRL_KEY('f'):
 		Find();
 		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
@@ -757,6 +828,7 @@ void init(){
 	config.filename = NULL;
 	config.statusmsg[0] = '\0';
 	config.statusmsg_time = 0;
+	config.syntax = NULL;
 	if (getWindowSize(&config.screenlines, &config.screencols) == -1) die("getWindowSize");
 	config.screenlines -= 2;
 }

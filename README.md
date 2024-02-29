@@ -48,6 +48,6 @@ for the full changelog check the CHANGELOG.md file or the version compare on the
 
 Version 1.0 focused on basic features of a terminal text editor such as Saving, Exiting and Searching.
 
-Version 2.0 will focus on syntax highlighting and filetype detection.
+Version 2.0 is focusing on syntax highlighting and filetype detection.
 
 Version 3.0 will focus on configuration.
