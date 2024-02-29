@@ -20,3 +20,8 @@ Syntax highlighting for digits
 
 # 2.1
 Highlights matches when searching with the Ctrl-F keybind
+
+# 2.2
+Changed digit highlighting to support decimals which use a '.' 
+
+Changed digit highlighting to not highlight digits that are followed by a letter, for example int32 is not highlighted but 32int is

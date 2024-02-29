@@ -17,7 +17,7 @@
 
 /* defines */
 
-#define CurrentJuraVersion "2.1"
+#define CurrentJuraVersion "2.2"
 #define JuraTabStop 8
 #define JuraQuitTimes 1
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -41,7 +41,7 @@ enum Highlight{
 
 /* data */
 
-typedef struct eline{
+typedef struct editorline{
 	int size;
 	int rendersize;
 	char *chars;
@@ -164,14 +164,26 @@ int getWindowSize(int *lines, int *cols){
 
 /* syntax highlighting */
 
+int is_seperator(int c){
+	return isspace(c) || c == '\0' || strrchr(",.()+-/*=~%<>[];", c) != NULL;
+}
+
 void UpdateSyntax(eline *line){
 	line->hl = realloc(line->hl, line->rendersize);
 	memset(line->hl, HL_NORMAL, line->rendersize);
-	int i;
-	for(i = 0; i < line->rendersize; i++){
-		if(isdigit(line->render[i])){
+	int prev_sep = 1;
+	int i = 0;
+	while(i < line->rendersize){
+		char c = line->render[i];
+		unsigned char prev_hl = (i > 0) ? line->hl[i - 1] : HL_NORMAL;
+		if((isdigit(c) && (prev_sep || prev_hl == HL_NUMBER)) || (c == '.' && prev_hl == HL_NUMBER)) {
 			line->hl[i] = HL_NUMBER;
+			i++;
+			prev_sep = 0;
+			continue;
 		}
+		prev_sep = is_seperator(c);
+		i++;
 	}
 }
 
@@ -286,7 +298,7 @@ void LineRemoveChar(eline *line, int at){
 	config.mod++;
 }
 
-/*  editors operations */
+/*  editor operations */
 
 void InsertChar(int c){
 	if(config.y == config.numlines){
@@ -442,7 +454,7 @@ void Find(){
 	int saved_cy = config.y;
 	int saved_coloff = config.coloff;
 	int saved_offline = config.offline;
-	char *query = Prompt("Search: %s (ESC|Arrow keys|Enter)", FindCallback);
+	char *query = Prompt("Search: %s (use ESC|Arrow keys|Enter)", FindCallback);
 	if(query){
 		free(query);
 	}else {
