@@ -17,7 +17,7 @@
 
 /* defines */
 
-#define CurrentJuraVersion "2.3"
+#define CurrentJuraVersion "2.4"
 #define JuraTabStop 8
 #define JuraQuitTimes 1
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -35,6 +35,10 @@ enum Key{
 
 enum Highlight{
 	HL_NORMAL = 0,
+	HL_COMMENT,
+	HL_MLCOMMENT,
+	HL_KEYWORD1,
+	HL_KEYWORD2,
 	HL_STRING,
 	HL_NUMBER,
 	HL_MATCH
@@ -48,15 +52,21 @@ enum Highlight{
 struct Syntax{
 	char *filetype;
 	char **filematch;
+	char **keywords;
+	char *singleline_comment_start;
+	char *multiline_comment_start;
+	char *multiline_comment_end;
 	int flags;
 };
 
-typedef struct eline{
+typedef struct editorline{
+	int idx;
 	int size;
 	int rendersize;
 	char *chars;
 	char *render;
 	unsigned char *hl;
+	int hl_open_comment;
 }eline;
 
 struct Config{
@@ -80,12 +90,18 @@ struct Config config;
 
 /* filetypes */
 
-char *C_HL_extensions[] = {".c", ".h", "cpp", NULL};
+char *CExtensions[] = {".c", ".h", "cpp", NULL};
+char *CKeywords[] = {
+	"switch", "if", "while", "for", "break", "continue", "return", "else", "struct", "union", "typedef", "static", "enum", "class", "case",
+	"int|", "long|", "double|", "float|", "char|", "unsigned|", "signed|", "void|", NULL
+};
 
 struct Syntax HLDB[] = {
 	{
 		"c",
-		C_HL_extensions,
+		CExtensions,
+		CKeywords,
+		"//", "/*", "*/",
 		HL_HIGHLIGHT_NUMBERS | HL_HIGHLIGHT_STRINGS
 	},
 };
@@ -190,22 +206,61 @@ int getWindowSize(int *lines, int *cols){
 /* syntax highlighting */
 
 int is_seperator(int c){
-	return isspace(c) || c == '\0' || strrchr(",.()+-/*=~%<>[];", c) != NULL;
+	return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];", c) != NULL;
 }
 
 void UpdateSyntax(eline *line){
 	line->hl = realloc(line->hl, line->rendersize);
 	memset(line->hl, HL_NORMAL, line->rendersize);
 	if(config.syntax == NULL) return;
+	char **keywords = config.syntax->keywords;
+	char *scs = config.syntax->singleline_comment_start;
+	char *mcs = config.syntax->multiline_comment_start;
+	char *mce = config.syntax->multiline_comment_end;
+	int scs_len = scs ? strlen(scs) : 0;
+	int mcs_len = mcs ? strlen(mcs) : 0;
+	int mce_len = mce ? strlen(mce) : 0;
 	int prev_sep = 1;
 	int in_string = 0;
+	int in_comment = (line->idx > 0 && config.line[line->idx - 1].hl_open_comment);
 	int i = 0;
 	while(i < line->rendersize){
 		char c = line->render[i];
 		unsigned char prev_hl = (i > 0) ? line->hl[i - 1] : HL_NORMAL;
+		if(scs_len && !in_string){
+			if(!strncmp(&line->render[i], scs, scs_len)){
+				memset(&line->hl[i], HL_COMMENT, line->rendersize - i);
+				break;
+			}
+		}
+		if(mcs_len && mce_len && !in_string && !in_string){
+			if(in_comment){
+				line->hl[i] = HL_MLCOMMENT;
+				if(!strncmp(&line->render[i], mce, mce_len)){
+					memset(&line->hl[i], HL_MLCOMMENT, mce_len);
+					i += mce_len;
+					in_comment = 0;
+					prev_sep = 1;
+					continue;
+				}else{
+					i++;
+					continue;
+				}
+			}else if(!strncmp(&line->render[i], mcs, mcs_len)){
+				memset(&line->hl[i], HL_MLCOMMENT, mcs_len);
+				i += mcs_len;
+				in_comment = 1;
+				continue;
+			}
+		}
 		if(config.syntax->flags & HL_HIGHLIGHT_STRINGS){
 			if(in_string){
 				line->hl[i] = HL_STRING;
+				if(c == '\\' && i + 1 < line->rendersize){
+					line->hl[i + 1] = HL_STRING;
+					i += 2;
+					continue;
+				}
 				if(c == in_string) in_string = 0;
 				i++;
 				prev_sep = 1;
@@ -227,13 +282,38 @@ void UpdateSyntax(eline *line){
 				continue;
 			}
 		}
+		if(prev_sep){
+			int j;
+			for(j = 0; keywords[j]; j++){
+				int klen = strlen(keywords[j]);
+				int kw2 = keywords[j][klen - 1] == '|';
+				if(kw2) klen--;
+				if(!strncmp(&line->render[i], keywords[j], klen) && is_seperator(line->render[i + klen])){
+					memset(&line->hl[i], kw2 ? HL_KEYWORD2 : HL_KEYWORD1, klen);
+					i += klen;
+					break;
+				}
+			}
+			if(keywords[j] != NULL){
+				prev_sep = 0;
+				continue;
+			}
+		}
 		prev_sep = is_seperator(c);
 		i++;
 	}
+	int changed = (line->hl_open_comment != in_comment);
+	line->hl_open_comment = in_comment;
+	if(changed && line->idx + 1 < config.numlines)
+		UpdateSyntax(&config.line[line->idx + 1]);
 }
 
 int SyntaxToColor(int hl){
 	switch(hl){
+		case HL_COMMENT:
+		case HL_MLCOMMENT: return 36;
+		case HL_KEYWORD1: return 33;
+		case HL_KEYWORD2: return 32;
 		case HL_STRING: return 35;
 		case HL_NUMBER: return 31;
 		case HL_MATCH: return 34;
@@ -265,27 +345,27 @@ void SelectSyntaxHighlight(){
 
 /* line operations */
 
-int LineXToRenderx(eline *line, int cx){
-	int rx = 0;
+int LineXToRenderx(eline *line, int x){
+	int renderx = 0;
 	int j;
-	for(j = 0; j < cx; j++){
+	for(j = 0; j < x; j++){
 		if(line->chars[j] == '\t')
-			rx += (JuraTabStop - 1) - (rx % JuraTabStop);
-		rx++;
+			renderx += (JuraTabStop - 1) - (renderx % JuraTabStop);
+		renderx++;
 	}
-	return rx;
+	return renderx;
 }
 
-int LineRenderxToX(eline *line, int rx){
-	int cur_rx = 0;
-	int cx;
-	for(cx = 0; cx < line->size; cx++){
-		if(line->chars[cx] == '\t')
-			cur_rx += (JuraTabStop -1) - (cur_rx % JuraTabStop);
-		cur_rx++;
-		if(cur_rx > rx) return cx;
+int LineRenderxToX(eline *line, int renderx){
+	int cur_renderx = 0;
+	int x;
+	for(x = 0; x < line->size; x++){
+		if(line->chars[x] == '\t')
+			cur_renderx += (JuraTabStop -1) - (cur_renderx % JuraTabStop);
+		cur_renderx++;
+		if(cur_renderx > renderx) return x;
 	}
-	return cx;
+	return x;
 }
 
 void UpdateLine(eline *line){
@@ -313,6 +393,8 @@ void InsertLine(int at, char *s, size_t len){
 	if(at < 0 || at > config.numlines) return;
 	config.line = realloc(config.line, sizeof(eline) * (config.numlines + 1));
 	memmove(&config.line[at + 1], &config.line[at], sizeof(eline) * (config.numlines - at));
+	for(int j = at + 1; j <= config.numlines; j++) config.line[j].idx++;
+	config.line[at].idx = at;
 	config.line[at].size = len;
 	config.line[at].chars = malloc(len + 1);
 	memcpy(config.line[at].chars, s, len);
@@ -320,6 +402,7 @@ void InsertLine(int at, char *s, size_t len){
 	config.line[at].rendersize = 0;
 	config.line[at].render = NULL;
 	config.line[at].hl = NULL;
+	config.line[at].hl_open_comment = 0;
 	UpdateLine(&config.line[at]);
 	config.numlines++;
 	config.mod++;
@@ -335,6 +418,7 @@ void RemoveLine(int at){
 	if(at < 0 || at >= config.numlines) return;
 	FreeLine(&config.line[at]);
 	memmove(&config.line[at], &config.line[at + 1], sizeof(eline) * (config.numlines - at - 1));
+	for(int j = at; j < config.numlines - 1; j++) config.line[j].idx--;
 	config.numlines--;
 	config.mod++;
 }
@@ -366,7 +450,7 @@ void LineRemoveChar(eline *line, int at){
 	config.mod++;
 }
 
-/*  operations */
+/* editor operations */
 
 void InsertChar(int c){
 	if(config.y == config.numlines){
@@ -524,7 +608,7 @@ void Find(){
 	int saved_cy = config.y;
 	int saved_coloff = config.coloff;
 	int saved_offline = config.offline;
-	char *query = Prompt("Search: %s (use ESC|Arrow keys|Enter)", FindCallback);
+	char *query = Prompt("Search: %s (ESC|Arrow keys|Enter)", FindCallback);
 	if(query){
 		free(query);
 	}else {
@@ -604,7 +688,17 @@ void DrawLines(struct buffer *buff){
 			int current_color = -1;
 			int j;
 			for(j = 0; j < len; j++){
-				if(hl[j] == HL_NORMAL){
+				if(iscntrl(c[j])){
+					char sym = (c[j] <= 26) ? '@' + c[j] : '?';
+					AttachBuffer(buff, "\x1b[7m", 4);
+					AttachBuffer(buff, &sym, 1);
+					AttachBuffer(buff, "\x1b[m", 3);
+					if(current_color != -1){
+						char buf[16];
+						int clen = snprintf(buf, sizeof(buf), "\x1b[%dm", current_color);
+						AttachBuffer(buff, buf, clen);
+					}
+				}else if(hl[j] == HL_NORMAL){
 					if(current_color != -1){
 						AttachBuffer(buff, "\x1b[39m", 5);
 						current_color = -1;
@@ -632,7 +726,7 @@ void DrawStatusBar(struct buffer *buff){
 	AttachBuffer(buff, "\x1b[7m", 4);
 	char status[80], rstatus[80];
 	int len = snprintf(status, sizeof(status), "%.20s - %d lines %s", config.filename ? config.filename : "[No Name]", config.numlines, config.mod ? "(modified)" : "");
-	int rlen = snprintf(rstatus, sizeof(rstatus), "%s | %d/%d", config.syntax ? config.syntax->filetype : "no filetype", config.y + 1, config.numlines);
+	int rlen = snprintf(rstatus, sizeof(rstatus), "%s | %d/%d", config.syntax ? config.syntax->filetype : "no filetype detected", config.y + 1, config.numlines);
 	if(len > config.screencols) len = config.screencols;
 	AttachBuffer(buff, status, len);
 	while(len < config.screencols){
@@ -773,7 +867,6 @@ void ProcessKeypress(){
 	case CTRL_KEY('s'):
 		Save();
 		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
-		break;
 		break;
 	case CTRL_KEY('f'):
 		Find();
