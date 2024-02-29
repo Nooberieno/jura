@@ -128,7 +128,7 @@ int ReadKey(){
 	}
 }
 
-int getCursorPosition(int lines, int *cols){
+int getCursorPosition(int *lines, int *cols){
 	char buf[32];
 	unsigned int i = 0;
 	if(write(STDOUT_FILENO, "\x1b[6n", 4) != 4) return -1;
