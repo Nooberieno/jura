@@ -463,13 +463,13 @@ void DrawLines(struct buffer *buff){
 			if(welkom > config.screencols) welkom = config.screencols;
 			int padding = (config.screencols - welkom) / 2;
 			if(padding){
-				AttachBuffer(buff, "~", 1);
+				AttachBuffer(buff, "-", 1);
 				padding--;
 			}
 			while(padding--) AttachBuffer(buff, " ", 1);
 			AttachBuffer(buff, welcome, welkom);
 		}else {
-		AttachBuffer(buff, "~", 1);
+		AttachBuffer(buff, "-", 1);
 		}
 		}else{
 			int len = config.line[fileline].rendersize - config.coloff;
