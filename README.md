@@ -68,7 +68,7 @@ GO
 
 Swift
 
-jura also support detects and partially highlights certain other filetypes, these include:
+jura also detects and partially highlights certain other filetypes, these include:
 
 JSON
 
