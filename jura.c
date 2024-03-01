@@ -199,6 +199,7 @@ char *CssSyntax[] = {
 
 char *TextExtensions[] = {".txt", NULL};
 char *BinaryExtensions[] = {".appimage", ".AppImage", "Appimage", NULL};
+char *ShellExtensions[] = {".sh", NULL};
 
 struct Syntax SyntaxDatabase[] = {
 	{
@@ -309,6 +310,13 @@ struct Syntax SyntaxDatabase[] = {
 	{
 		"Binary",
 		BinaryExtensions,
+		NULL,
+		NULL, NULL, NULL,
+		NoHighlight
+	},
+	{
+		"Shell script",
+		ShellExtensions,
 		NULL,
 		NULL, NULL, NULL,
 		NoHighlight
@@ -845,7 +853,7 @@ void AttachBuffer(struct buffer *buff, const char *s, int len){
 	buff->len += len;
 }
 
-void abFree(struct buffer *buff){
+void FreeBuffer(struct buffer *buff){
 	free(buff->b);
 }
 
@@ -960,20 +968,27 @@ void DrawMessageBar(struct buffer *buff){
 		AttachBuffer(buff, config.statusmsg, msglen);
 }
 
-void RefreshScreen(){
-	Scroll();
-	struct buffer buff = StartBuffer;
-	AttachBuffer(&buff, "\x1b[?25l", 6);
-	AttachBuffer(&buff, "\x1b[H", 3);
-	DrawLines(&buff);
-	DrawStatusBar(&buff);
-	DrawMessageBar(&buff);
-	char buf[32];
-	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (config.y - config.offline) + 1, (config.renderx - config.coloff) + 1);
-	AttachBuffer(&buff, buf, strlen(buf));
-	AttachBuffer(&buff, "\x1b[?25h", 6);
-	write(STDOUT_FILENO, buff.b, buff.len);
-	abFree(&buff);
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024
+
+void RefreshScreen() {
+    Scroll();
+    struct buffer buff = StartBuffer;
+    AttachBuffer(&buff, "\x1b[?25l", 6);
+    AttachBuffer(&buff, "\x1b[H", 3);
+    DrawLines(&buff);
+    DrawStatusBar(&buff);
+    DrawMessageBar(&buff);
+    char buf[32];
+    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (config.y - config.offline) + 1, (config.renderx - config.coloff) + 1);
+    AttachBuffer(&buff, buf, strlen(buf));
+    AttachBuffer(&buff, "\x1b[?25h", 6);
+    write(STDOUT_FILENO, buff.b, buff.len);
+    FreeBuffer(&buff);
 }
 
 void SetStatusMessage(const char *fmt, ...){
