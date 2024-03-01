@@ -91,7 +91,7 @@ struct Config config;
 
 /* filetypes */
 
-char *CExtensions[] = {".c", ".h", "cpp", NULL};
+char *CExtensions[] = {".c", ".h", NULL};
 char *CKeywords[] = {
 	"switch", "if", "while", "for", "break", "continue", "return", "else", "struct", "union", "typedef", "static", "enum", "class", "case",
 	"int|", "long|", "double|", "float|", "char|", "unsigned|", "signed|", "void|", NULL
@@ -128,7 +128,7 @@ char *JSKeywords[] = {
 	"break", "case", "catch", "class", "const", "continue", "debugger", "default", "delete", "do", "else", "export", "extends", "finally", "for", "function", "if",
 	"import", "in", "instanceof", "new", "return", "super", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "yield", NULL
 };
-char *TSExtensions[] = {"ts", ".d.ts", NULL};
+char *TSExtensions[] = {"ts", ".ts", NULL};
 char *TSKeywords[] = {
 	"break", "case", "catch", "class", "const", "continue", "debugger", "default", "delete", "do", "else", "export", "extends", "finally", "for", "function", "if",
 	"import", "in", "instanceof", "new", "return", "super", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "yield", "type", "interface",
