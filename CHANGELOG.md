@@ -33,7 +33,7 @@ Digit highlighting is now only enabled for these files
 
 These files also have highlighting for both double and single quoted strings
 
-2.4
+# 2.4
 jura now fully supports syntax highlighting in following programming languages:
 
 C,
@@ -55,3 +55,10 @@ HTML,
 CSS,
 
 Any files that do not have syntax highlighting are not detected and will display "no filetype detected"
+
+# 2.5
+jura now also fully supports base TeX and base LaTeX
+
+for jura to detect TeX files they need to have the .tex extension
+
+for jura to detect LaTeX files they need to have the .ltx extension
