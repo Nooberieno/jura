@@ -46,6 +46,7 @@ enum Highlight{
 
 #define HighlightDigits (1<<0)
 #define HighlightStrings (1<<1)
+#define NoHighlight (1<<1)
 
 /* data */
 
@@ -196,6 +197,9 @@ char *CssSyntax[] = {
 "display: block", "display: inline", "display: flex", NULL
 };
 
+char *TextExtensions[] = {".txt", NULL};
+char *BinaryExtensions[] = {".appimage", ".AppImage", "Appimage", NULL};
+
 struct Syntax SyntaxDatabase[] = {
 	{
 		"c",
@@ -294,6 +298,20 @@ struct Syntax SyntaxDatabase[] = {
 		CssSyntax,
 		"//", "/*", "*/",
 		HighlightDigits | HighlightStrings
+	},
+	{
+		"text file",
+		TextExtensions,
+		NULL,
+		NULL, NULL, NULL,
+		NoHighlight
+	},
+	{
+		"Binary",
+		BinaryExtensions,
+		NULL,
+		NULL, NULL, NULL,
+		NoHighlight
 	}
 };
 
@@ -397,13 +415,14 @@ int getWindowSize(int *lines, int *cols){
 /* syntax highlighting */
 
 int is_seperator(int c){
-	return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];", c) != NULL;
+	return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];{}", c) != NULL;
 }
 
 void UpdateSyntax(eline *line){
 	line->hl = realloc(line->hl, line->rendersize);
 	memset(line->hl, HL_NORMAL, line->rendersize);
 	if(config.syntax == NULL) return;
+	if(config.syntax->flags == NoHighlight) return;
 	char **keywords = config.syntax->keywords;
 	char *scs = config.syntax->singleline_comment_start;
 	char *mcs = config.syntax->multiline_comment_start;
