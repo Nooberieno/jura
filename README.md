@@ -43,6 +43,39 @@ replace path/to/jura with the path to the jura binary you created in the install
 
 you should now be able to run jura anywhere instead of ./jura in the folder of the binary.
 
+# Syntax Highlighting Support
+jura supports syntax highlighting in following programming languages:
+
+C
+
+C++
+
+Python
+
+Lua
+
+Rust
+
+Javascript
+
+Typescript
+
+C#
+
+Java
+
+GO
+
+Swift
+
+jura also support detects and partially highlights certain other filetypes, these include:
+
+JSON
+
+HTML
+
+CSS
+
 # RoadMap
 for the full changelog check the CHANGELOG.md file or the version compare on the releases page.
 
