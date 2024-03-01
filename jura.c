@@ -197,6 +197,62 @@ char *CssSyntax[] = {
 "display: block", "display: inline", "display: flex", NULL
 };
 
+char *TeXExtensions[] = {".tex", NULL};
+char *TeXSyntax[] = {
+	"\\alpha", "\\beta", "\\gamma", "\\delta", "\\epsilon", "\\varepsilon", "\\zeta", "\\eta", "\\theta", "\\vartheta", "\\iota", "\\kappa", "\\lambda", "\\mu", "\\nu", "\\xi", "\\o", "\\pi", "\\varpi", "\\rho", "\\varrho", "\\sigma",
+	"\\varsigma", "\\tau", "\\upsilon", "\\phi", "\\varphi", "\\chi", "\\psi", "\\omega", "\\Alpha", "\\Beta", "\\Gamma", "\\Delta", "\\Epsilon", "\\Zeta", "\\Eta", "\\Theta", "\\Iota", "\\Kappa", "\\Lambda", "\\Mu", "\\Nu", "\\Xi", "\\O",
+	"\\Pi", "\\Sigma", "\\Rho", "\\Tau", "\\Upsilon", "\\Phi", "\\Chi", "\\Psi", "\\Omega", "\\aleph", "\\hbar", "\\imath", "\\jmath", "\\ell", "\\wp", "\\Re", "\\Im", "\\partial", "\\infty", "\\prime", "\\emptyset", "\\nabla", "\\surd",
+	"\\top", "\\bot", "\\|", "\\angle", "\\triangle", "\\backslash", "\\forall", "\\exists", "\\neg", "\\not", "\\flat", "\\natural", "\\sharp", "\\clubsuit", "\\diamondsuit", "\\heartsuit", "\\spadesuit", "\\sum", "\\prod", "\\coprod", "\\int",
+	"\\oint", "\\bigcap", "\\bigcup", "\\bigsqcup", "\\bigvee", "\\bigwedge", "\\bigodot", "\\bigotimes", "\\bigoplus", "\\biguplus", "\\pm", "\\mp", "\\setminus", "\\cdot", "\\times", "\\ast", "\\star", "\\diamond", "\\circ", "\\bullet", "\\div",
+	"\\cap", "\\cup", "\\uplus", "\\sqcap", "\\sqcup", "\\triangleleft", "\\triangleright", "\\wr", "\\bigcirc", "\\bigtriangleup", "\\bigtriangledown", "\\vee", "\\lor", "\\wedge", "\\land", "\\oplus", "\\ominus", "\\otimes", "\\oslash","\\odot",
+	"\\dagger", "\\ddager", "\\amalg", "\\hsize", "\\vsize", "\\displaywidth", "\\hoffset=", "\\voffset=", "\\leq", "\\le", "\\prec", "\\preceq", "\\ll", "\\subset", "\\subseteq", "\\sqsubseteq", "\\in", "\\vdash", "\\smile", "\\frown", "\\propto",
+	"\\geq", "\\ge", "\\succ", "\\succeq", "\\gg", "\\supset", "\\supseteq", "\\sqsubseteq", "\\notin", "\\dashv", "\\mid", "\\parallel", "\\equiv", "\\sim", "\\simeq", "\\asymp", "\\approx", "\\cong", "\\bowtie", "\\ni", "\\owns", "\\models",
+	"\\doteq", "\\perp", "\\leftarrow", "\\gets", "\\Leftarrow", "\\rightarrow", "\\to", "\\Rightarrow", "\\leftrightarrow", "\\Leftrightarrow", "\\mapsto", "\\hookleftarrow", "\\uparrow", "\\downarrow", "\\updownarrow", "\\nearrow", "nwarrow",
+	"\\ne", "\\longleftarrow", "\\Longleftarrow", "\\longrightarrow", "\\Longrightarrow", "\\longleftrightarrow", "\\Longleftrightarrow", "\\longmapsto", "\\hookrightarrow", "\\Uparrow", "\\Downarrow", "\\Updownarrow", "\\searrow", "\\swarrow",
+	"\\buildrel", "\\over", "\\lbrack", "\\rbrack", "\\vert", "\\Vert", "[\\![", "]\\!]", "\\lbrace", "\\rbrace", "\\{", "\\}", "\\lfloor", "\\rfloor", "(\\!(", ")\\!)", "\\langle", "\\rangle", "\\lceil", "\\rceil", "\\langle\\!\\langle", "\\rangle\\!\\rangle",
+	"\\left", "\\right", "\\bigl", "\\bigr", "\\Bigl", "\\Bigr", "\\biggl", "\\biggr", "\\everypar", "\\everymath", "\\everydisplay", "\\everycr", "\\hat", "\\widehat", "\\check", "\\tilde", "\\widetilde", "\\acute", "\\grave", "\\dot", "\\ddot", "\\breve",
+	"\\bar", "\\vec", "\\^", "\\'", "\\~", "\\`", "\\.", "\\\"", "\\u", "\\-", "\\skew", "\\overline", "\\underline", "\\sqrt", "\\root", "\\of", "\\atop", "\\choose", "\\brace", "\\brack", "\\displaystyle", "\\textstyle", "\\scriptstyle", "\\scriptscriptstyle",
+	"\\arccos", "\\arcsin", "\\arctan", "\\arg", "\\pmod", "\\bmod", "cos", "\\cosh", "\\cot", "\\coth", "\\csc", "\\deg", "\\det", "\\dim", "\\exp", "\\gcd", "\\hom", "\\inf", "\\ker", "\\lg", "\\lim", "\\liminf", "\\limsup", "\\ln",
+	"\\log", "\\max", "\\min", "\\Pr", "\\sec", "\\sin", "\\sinh", "\\sup", "\\tan", "\\tanh", "\\footnote", "\\topinsert", "\\pageinsert", "\\midinsert", "\\underbar", "\\endinsert", "\\day", "\\month", "\\year", "\\jobname", "\\romannumeral",
+	"\\uppercase", "\\lowercase", "\\dots", "\\cdots", "\\vdots", "\\ldots", "\\ddots", "\\hrulefill", "\\rightarrowfill", "\\leftarrowfill", "\\dotfill", "\\leaders", "\\hskip", "\\leaders", "\\hfill", "\\rm", "\\sl", "\\bf", "\\it", "\\tt", "\\/",
+	"\\magnification", "\\magstep", "\\magstephalf", "\\font", "\\char", "\\settabs", "\\settabs\\", "\\columns", "\\cr", "\\halign", "\\halign to", "\\openup", "\\noalign", "\\tabskip=", "\\omit", "\\span", "\\multispan", "\\hidewidth", "\\crcr",
+	"\\hbox to", "\\vbox to", "\\vtop to", "\\vcenter to", "\\rlap", "\\llap", "\\hfuzz", "\\vfuzz", "\\overfullrule", "\\indent", "\\noindent", "\\parindent=", "\\displayindent=", "\\leftskip=", "\\rightskip=", "\\narrower", "\\item", "\\itemitem",
+	"\\hangindent=", "\\hangafter=", "\\parshape=", "\\nopagenumbers", "\\pageno", "\\pageno=", "\\folio", "\\footline", "\\headline", "\\advance", "\\def", "\\cs", "\\let", "\\long", "\\outer", "\\global", "\\gdef", "\\edef", "\\xdef", "\\noexpand",
+	"\\expandafter", "\\futurelet", "\\csname", "\\endcsname", "\\string", "\\number", "\\the", "\\ifnum", "\\ifdim", "\\ifodd", "\\ifmmode", "\\if", "\\ifx", "\\ifeof", "\\iftrue", "\\iffalse", "\\ifcase", "\\else", "\\fi", "\\loop", "\\repeat",
+	"\\newif", "\\ifblob", "\\blobtrue", "\\blobfalse", "\\quad", "\\qquad", "\\thinspace", "\\enspace", "\\enskip", "\\hfil", "\\hfill", "\\mskip", "\\vskip", "\\vfil", "\\vfill", "\\struct", "\\phantom", "\\vphantom", "\\hphantom", "\\smash", "lower",
+	"\\raise", "\\hbox", "\\moveleft", "\\moveright", "\\vbox", "\\smallskip", "\\medskip", "\\bigskip", "\\smallbreak", "\\medbreak", "\\bigbreak", "\\filbreak", "\\baselineskip =","\\baselineskip = 12pt", "\\baselineskip = 18pt", "\\baselineskip = 24pt",
+	"\\openup", "\\jot", "\\raggedright", "\\raggedbottom", "\\matrix", "\\pmatrix", "\\bordermatrix", "\\overbrace", "\\underbrace", "\\eqno", "\\leqno", "\\eqalign", "\\eqalignno", "\\leqalignno", "\\displaylines", "\\cases", "\\noalign", "\\openup", NULL
+};
+
+char *LaTeXExtensions[] = {".ltx", NULL};
+char *LaTeXSyntax[] = {
+	"\\alpha", "\\beta", "\\gamma", "\\delta", "\\epsilon", "\\varepsilon", "\\zeta", "\\eta", "\\theta", "\\vartheta", "\\iota", "\\kappa", "\\lambda", "\\mu", "\\nu", "\\xi", "\\o", "\\pi", "\\varpi", "\\rho", "\\varrho", "\\sigma",
+	"\\varsigma", "\\tau", "\\upsilon", "\\phi", "\\varphi", "\\chi", "\\psi", "\\omega", "\\Alpha", "\\Beta", "\\Gamma", "\\Delta", "\\Epsilon", "\\Zeta", "\\Eta", "\\Theta", "\\Iota", "\\Kappa", "\\Lambda", "\\Mu", "\\Nu", "\\Xi", "\\O",
+	"\\Pi", "\\Sigma", "\\Rho", "\\Tau", "\\Upsilon", "\\Phi", "\\Chi", "\\Psi", "\\Omega", "\\aleph", "\\hbar", "\\imath", "\\jmath", "\\ell", "\\wp", "\\Re", "\\Im", "\\partial", "\\infty", "\\prime", "\\emptyset", "\\nabla", "\\surd",
+	"\\top", "\\bot", "\\|", "\\angle", "\\triangle", "\\backslash", "\\forall", "\\exists", "\\neg", "\\not", "\\flat", "\\natural", "\\sharp", "\\clubsuit", "\\diamondsuit", "\\heartsuit", "\\spadesuit", "\\sum", "\\prod", "\\coprod", "\\int",
+	"\\oint", "\\bigcap", "\\bigcup", "\\bigsqcup", "\\bigvee", "\\bigwedge", "\\bigodot", "\\bigotimes", "\\bigoplus", "\\biguplus", "\\pm", "\\mp", "\\setminus", "\\cdot", "\\times", "\\ast", "\\star", "\\diamond", "\\circ", "\\bullet", "\\div",
+	"\\cap", "\\cup", "\\uplus", "\\sqcap", "\\sqcup", "\\triangleleft", "\\triangleright", "\\wr", "\\bigcirc", "\\bigtriangleup", "\\bigtriangledown", "\\vee", "\\lor", "\\wedge", "\\land", "\\oplus", "\\ominus", "\\otimes", "\\oslash","\\odot",
+	"\\dagger", "\\ddager", "\\amalg", "\\hsize", "\\vsize", "\\displaywidth", "\\hoffset=", "\\voffset=", "\\leq", "\\le", "\\prec", "\\preceq", "\\ll", "\\subset", "\\subseteq", "\\sqsubseteq", "\\in", "\\vdash", "\\smile", "\\frown", "\\propto",
+	"\\geq", "\\ge", "\\succ", "\\succeq", "\\gg", "\\supset", "\\supseteq", "\\sqsubseteq", "\\notin", "\\dashv", "\\mid", "\\parallel", "\\equiv", "\\sim", "\\simeq", "\\asymp", "\\approx", "\\cong", "\\bowtie", "\\ni", "\\owns", "\\models",
+	"\\doteq", "\\perp", "\\leftarrow", "\\gets", "\\Leftarrow", "\\rightarrow", "\\to", "\\Rightarrow", "\\leftrightarrow", "\\Leftrightarrow", "\\mapsto", "\\hookleftarrow", "\\uparrow", "\\downarrow", "\\updownarrow", "\\nearrow", "nwarrow",
+	"\\ne", "\\longleftarrow", "\\Longleftarrow", "\\longrightarrow", "\\Longrightarrow", "\\longleftrightarrow", "\\Longleftrightarrow", "\\longmapsto", "\\hookrightarrow", "\\Uparrow", "\\Downarrow", "\\Updownarrow", "\\searrow", "\\swarrow",
+	"\\buildrel", "\\over", "\\lbrack", "\\rbrack", "\\vert", "\\Vert", "[\\![", "]\\!]", "\\lbrace", "\\rbrace", "\\{", "\\}", "\\lfloor", "\\rfloor", "(\\!(", ")\\!)", "\\langle", "\\rangle", "\\lceil", "\\rceil", "\\langle\\!\\langle", "\\rangle\\!\\rangle",
+	"\\left", "\\right", "\\bigl", "\\bigr", "\\Bigl", "\\Bigr", "\\biggl", "\\biggr", "\\everypar", "\\everymath", "\\everydisplay", "\\everycr", "\\hat", "\\widehat", "\\check", "\\tilde", "\\widetilde", "\\acute", "\\grave", "\\dot", "\\ddot", "\\breve",
+	"\\bar", "\\vec", "\\^", "\\'", "\\~", "\\`", "\\.", "\\\"", "\\u", "\\-", "\\skew", "\\overline", "\\underline", "\\sqrt", "\\root", "\\of", "\\atop", "\\choose", "\\brace", "\\brack", "\\displaystyle", "\\textstyle", "\\scriptstyle", "\\scriptscriptstyle",
+	"\\arccos", "\\arcsin", "\\arctan", "\\arg", "\\pmod", "\\bmod", "cos", "\\cosh", "\\cot", "\\coth", "\\csc", "\\deg", "\\det", "\\dim", "\\exp", "\\gcd", "\\hom", "\\inf", "\\ker", "\\lg", "\\lim", "\\liminf", "\\limsup", "\\ln",
+	"\\log", "\\max", "\\min", "\\Pr", "\\sec", "\\sin", "\\sinh", "\\sup", "\\tan", "\\tanh", "\\footnote", "\\topinsert", "\\pageinsert", "\\midinsert", "\\underbar", "\\endinsert", "\\day", "\\month", "\\year", "\\jobname", "\\romannumeral",
+	"\\uppercase", "\\lowercase", "\\dots", "\\cdots", "\\vdots", "\\ldots", "\\ddots", "\\hrulefill", "\\rightarrowfill", "\\leftarrowfill", "\\dotfill", "\\leaders", "\\hskip", "\\leaders", "\\hfill", "\\rm", "\\sl", "\\bf", "\\it", "\\tt", "\\/",
+	"\\magnification", "\\magstep", "\\magstephalf", "\\font", "\\char", "\\settabs", "\\settabs\\", "\\columns", "\\cr", "\\halign", "\\halign to", "\\openup", "\\noalign", "\\tabskip=", "\\omit", "\\span", "\\multispan", "\\hidewidth", "\\crcr",
+	"\\hbox to", "\\vbox to", "\\vtop to", "\\vcenter to", "\\rlap", "\\llap", "\\hfuzz", "\\vfuzz", "\\overfullrule", "\\indent", "\\noindent", "\\parindent=", "\\displayindent=", "\\leftskip=", "\\rightskip=", "\\narrower", "\\item", "\\itemitem",
+	"\\hangindent=", "\\hangafter=", "\\parshape=", "\\nopagenumbers", "\\pageno", "\\pageno=", "\\folio", "\\footline", "\\headline", "\\advance", "\\def", "\\cs", "\\let", "\\long", "\\outer", "\\global", "\\gdef", "\\edef", "\\xdef", "\\noexpand",
+	"\\expandafter", "\\futurelet", "\\csname", "\\endcsname", "\\string", "\\number", "\\the", "\\ifnum", "\\ifdim", "\\ifodd", "\\ifmmode", "\\if", "\\ifx", "\\ifeof", "\\iftrue", "\\iffalse", "\\ifcase", "\\else", "\\fi", "\\loop", "\\repeat",
+	"\\newif", "\\ifblob", "\\blobtrue", "\\blobfalse", "\\quad", "\\qquad", "\\thinspace", "\\enspace", "\\enskip", "\\hfil", "\\hfill", "\\mskip", "\\vskip", "\\vfil", "\\vfill", "\\struct", "\\phantom", "\\vphantom", "\\hphantom", "\\smash", "lower",
+	"\\raise", "\\hbox", "\\moveleft", "\\moveright", "\\vbox", "\\smallskip", "\\medskip", "\\bigskip", "\\smallbreak", "\\medbreak", "\\bigbreak", "\\filbreak", "\\baselineskip =","\\baselineskip = 12pt", "\\baselineskip = 18pt", "\\baselineskip = 24pt",
+	"\\openup", "\\jot", "\\raggedright", "\\raggedbottom", "\\matrix", "\\pmatrix", "\\bordermatrix", "\\overbrace", "\\underbrace", "\\eqno", "\\leqno", "\\eqalign", "\\eqalignno", "\\leqalignno", "\\displaylines", "\\cases", "\\noalign", "\\openup", 
+	"\\documentclass", "\\usepackage", "\\title", "\\author", "\\date", "\\maketitle", "\\tableofcontents", "\\section", "\\subsection", "\\subsubsection", "\\begin", "\\end", "\\caption", "\\label", "\\ref", "\\cite", "\\bibliographystyle", "bibliography",
+	"\\newline", "\\newpage", "\\linebreak", "\\newcommand", "\\renewcommand", "\\newenvironnement", "\\textbf", "\\textit", "\\large", "\\small", "\\emph", "\\node", "\\nodeconnect", "\\ex",NULL
+};
+
 char *TextExtensions[] = {".txt", NULL};
 char *BinaryExtensions[] = {".appimage", ".AppImage", "Appimage", NULL};
 char *ShellExtensions[] = {".sh", NULL};
@@ -320,6 +376,20 @@ struct Syntax SyntaxDatabase[] = {
 		NULL,
 		NULL, NULL, NULL,
 		NoHighlight
+	},
+	{
+		"TeX",
+		TeXExtensions,
+		TeXSyntax,
+		NULL, NULL, NULL,
+		HighlightDigits
+	},
+	{
+		"LaTeX",
+		LaTeXExtensions,
+		LaTeXSyntax,
+		NULL, NULL, NULL,
+		HighlightDigits
 	}
 };
 
