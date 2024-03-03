@@ -253,6 +253,28 @@ char *LaTeXSyntax[] = {
 	"\\newline", "\\newpage", "\\linebreak", "\\newcommand", "\\renewcommand", "\\newenvironnement", "\\textbf", "\\textit", "\\large", "\\small", "\\emph", "\\node", "\\nodeconnect", "\\ex",NULL
 };
 
+char *PHPExtensions[] = {".php", NULL};
+char *PHPKeywords[] = {
+	"abstract", "and", "array", "as", "break", "callable", "case", "catch", "class", "clone", "const", "continue", "declare", "die", "do", "else", "elseif", "empty", "enddeclare", "endfor", "endforeach", "endif", "endswitch", "endwhile", "extends", "final", 
+	"for", "foreach", "function", "global", "goto", "if", "implements", "include", "include_once", "instanceof", "insteadof", "interface", "isset", "list", "namespace", "new", "null", "object", "old", "or", "private", "protected", "public", "require", 
+	"require_once", "return", "static", "stdClass", "step", "switch", "throw", "trait", "try", "unset", "use", "var", "while", "xor",
+	"bool|", "float|", "int|", "string|", "resource|", NULL
+};
+
+char *RubyExtensions[] = {".rb", ".gemspec", NULL};
+char *RubyKeywords[] = {
+	"BEGIN", "END", "alias", "and", "begin", "break", "case", "class", "def", "defined?", "do", "else", "elsif", "end", "ensure", "false", "for", "if", "in", "include", "initialize", "module", "next", "nil|", "not", "or", "private", "protected", "public", 
+	"redo", "rescue", "retry", "return", "self", "super", "then", "true", "undef", "unless", "until", "when", "while", "yield",
+	"Array|", "Bignum|", "Class|", "Dir|", "File|", "Float|", "Hash|", "IO|", "Integer|", "Module|", "NilClass|", "Object|", "Proc|", "Range|", "Regexp|", "String|", "Symbol|", "Time|", "TrueClass|", "FalseClass|", NULL
+};
+
+char *KotlinExtensions[] = {".kt", ".ktm", ".kts", NULL};
+char *KotlinKeywords[] = {
+	"abstract", "as", "break", "by", "catch", "class", "continue", "const", "constructor", "crossinline", "data", "delegate", "do", "else", "enum", "extends", "false", "final", "finally", "for", "fun", "if", "implements", "import", "in", "infix", "init", 
+	"inner", "interface", "internal", "is", "lateinit", "noinline", "null", "object", "open", "out", "override", "package", "private", "protected", "public", "reified", "return", "sealed", "static", "super", "suspend", "tailrec", "this", "throw", "true", "try", "typealias", "val", "var", "when", "while", "yield",
+	"Any|", "Boolean|", "Byte|", "Char|", "Double|", "Float|", "Int|", "Long|", "Nothing|", "Short|", "String|", "Unit|", NULL
+};
+
 char *TextExtensions[] = {".txt", NULL};
 char *BinaryExtensions[] = {".appimage", ".AppImage", "Appimage", NULL};
 char *ShellExtensions[] = {".sh", NULL};
@@ -390,7 +412,28 @@ struct Syntax SyntaxDatabase[] = {
 		LaTeXSyntax,
 		NULL, NULL, NULL,
 		HighlightDigits
-	}
+	},
+	{
+		"PHP",
+		PHPExtensions,
+		PHPKeywords,
+		"//", "/*", "*/",
+		HighlightDigits | HighlightStrings
+	},
+	{
+		"Ruby",
+		RubyExtensions,
+		RubyKeywords,
+		"#", "=begin", "=end",
+		HighlightDigits | HighlightStrings
+	},
+	{
+		"Kotlin",
+		KotlinExtensions,
+		KotlinKeywords,
+		"//", "/*", "*/",
+		HighlightDigits | HighlightStrings
+	},
 };
 
 #define SyntaxDatabaseEntries (sizeof(SyntaxDatabase) / sizeof(SyntaxDatabase[0]))
