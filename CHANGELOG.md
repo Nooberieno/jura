@@ -62,3 +62,6 @@ jura now also fully supports base TeX and base LaTeX
 for jura to detect TeX files they need to have the .tex extension
 
 for jura to detect LaTeX files they need to have the .ltx extension
+
+# 2.6
+jura now supports PHP, Ruby and Kotlin

@@ -70,6 +70,12 @@ GO (.go .mod .sum files)
 
 Swift (.swift .xcodeproj .storyboard .xib .xcdatamodeld files)
 
+PHP (.php files)
+
+Ruby (.rb files)
+
+Kotlin (.kt .ktm .kts files)
+
 jura also fully supports base TeX and base LaTeX
 
 for jura to detect TeX files they need to have the .tex extension
