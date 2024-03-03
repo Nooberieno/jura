@@ -93,7 +93,7 @@ CSS (.css files)
 # RoadMap
 for the full changelog check the CHANGELOG.md file or the version compare on the releases page.
 
-between versions there might be bugg fixes. it is important to update to the latest version of jura for the most features and the least bugs.
+between versions there might be bug fixes. it is important to update to the latest version of jura for the most features and the least bugs.
 
 Version 1.0 focused on basic features of a terminal text editor such as Saving, Exiting and Searching.
 
