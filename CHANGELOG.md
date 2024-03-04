@@ -75,6 +75,6 @@ Added an editconfig command.
 type jura or ./jura (depending on your installation) followed by "editconfig" to adjust your config file
 
 # 3.2
-Added an editconfig command. 
+Added an setconfig command. 
 
-type jura or ./jura (depending on your installation) followed by "editconfig" to adjust your config file
+type jura or ./jura (depending on your installation) followed by "setconfig" "path/to/your/config"
