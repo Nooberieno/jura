@@ -38,7 +38,7 @@ struct UserConfig UConfig;
 
 void SaveConfig(UserConfig *config, char *filename){
 	FILE *file = fopen(filename, "w");
-	fprintf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
+	fprintf(file, "%d %d %d %d %d %d %d %s", config->Normal_Color, config->Comment_Color, config->Keywords_Color, config->Types_Color, config->StringColor_, config->Number_Color, config->Match_Color, config->First_Char);
 	fclose(file);
 }
 
@@ -48,9 +48,12 @@ void LoadConfig(UserConfig *config, char *filename){
 		fscanf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
 		fclose(file);
 	}else{
-		FILE *file = fopen(filename, "r");
-		fscanf(file, "%d %d %d %d %d %d %d %s", 37, 36, 33, 34, 31, 35, 32, "-");
+		FILE *file = fopen(filename, "w");
+		fprintf(file, "%d %d %d %d %d %d %d %s", 37, 36, 33, 34, 31, 35, 32, "-");
 		fclose(file);
+		FILE *file1 = fopen(filename, "r");
+		fscanf(file1, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
+		fclose(file1);
 	}
 }
 
