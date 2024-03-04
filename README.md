@@ -93,10 +93,19 @@ CSS (.css files)
 # RoadMap
 for the full changelog check the CHANGELOG.md file or the version compare on the releases page.
 
-between versions there might be bug fixes. it is important to update to the latest version of jura for the most features and the least bugs.
+between versions there might be bug fixes. it is important to update to the latest version of jura for the most features and the least bugs. 
+
+check the changelog to know if any major bugs have been fixed for a newer version
 
 Version 1.0 focused on basic features of a terminal text editor such as Saving, Exiting and Searching.
 
 Version 2.0 focused on syntax highlighting and filetype detection.
 
-Version 3.0 is focusing on configuration and documentation
+Version 3.0 is focusing on configuration and documentation.
+
+# Bugs
+This section contains the current known major bugs and are being worked on
+
+Terminal does not get properly restored after an error has been thrown
+
+The editor does not update in size after the terminal or terminal emulator changes size
