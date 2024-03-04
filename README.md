@@ -97,6 +97,6 @@ between versions there might be bug fixes. it is important to update to the late
 
 Version 1.0 focused on basic features of a terminal text editor such as Saving, Exiting and Searching.
 
-Version 2.0 is focusing on syntax highlighting and filetype detection.
+Version 2.0 focused on syntax highlighting and filetype detection.
 
-Version 3.0 will focus on configuration and documentation
+Version 3.0 is focusing on configuration and documentation
