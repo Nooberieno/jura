@@ -65,3 +65,6 @@ for jura to detect LaTeX files they need to have the .ltx extension
 
 # 2.6
 jura now supports PHP, Ruby and Kotlin
+
+# 3.0
+Added a config file in the users home folder that jura creates on first startup

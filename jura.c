@@ -17,7 +17,7 @@
 
 /* defines */
 
-#define CurrentJuraVersion "2.6"
+#define CurrentJuraVersion "3.0"
 #define JuraTabStop 8
 #define JuraQuitTimes 1
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -36,18 +36,26 @@ typedef struct UserConfig{
 
 struct UserConfig UConfig;
 
+void SaveConfig(char *filename){
+	FILE *file = fopen(filename, "w");
+	fprintf(file, "%d %d %d %d %d %d %d %s", 37, 36, 33, 34, 31, 35, 32, "-");
+	fclose(file);
+}
+
 void LoadConfig(UserConfig *config){
-	FILE *file = fopen("config.jura", "r");
+	char *home_dir = getenv("HOME");
+	char config_path[256];
+	strcpy(config_path, home_dir);
+    strcat(config_path, "/config.jura");
+	FILE *file = fopen(config_path, "r");
 	if(file != NULL){
 		fscanf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
 		fclose(file);
 	}else{
-		FILE *file = fopen("config.jura", "w");
-		fprintf(file, "%d %d %d %d %d %d %d %s", 37, 36, 33, 34, 31, 35, 32, "-");
+		SaveConfig(config_path);
+		FILE *file = fopen(config_path, "r");
+		fscanf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
 		fclose(file);
-		FILE *file1 = fopen("config.jura", "r");
-		fscanf(file1, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
-		fclose(file1);
 	}
 }
 
@@ -63,14 +71,14 @@ enum Key{
 };
 
 enum Highlight{
-	HL_NORMAL = 0,
-	HL_COMMENT,
-	HL_MLCOMMENT,
-	HL_KEYWORD1,
-	HL_KEYWORD2,
-	HL_STRING,
-	HL_NUMBER,
-	HL_MATCH
+	Normal = 0,
+	Comment,
+	MultiLineComment,
+	Keywords,
+	Types,
+	StringColor,
+	Number,
+	Match
 };
 
 #define HighlightDigits (1<<0)
@@ -570,7 +578,7 @@ int is_seperator(int c){
 
 void UpdateSyntax(eline *line){
 	line->hl = realloc(line->hl, line->rendersize);
-	memset(line->hl, HL_NORMAL, line->rendersize);
+	memset(line->hl, Normal, line->rendersize);
 	if(config.syntax == NULL) return;
 	if(config.syntax->flags == NoHighlight) return;
 	char **keywords = config.syntax->keywords;
@@ -586,18 +594,18 @@ void UpdateSyntax(eline *line){
 	int i = 0;
 	while(i < line->rendersize){
 		char c = line->render[i];
-		unsigned char prev_hl = (i > 0) ? line->hl[i - 1] : HL_NORMAL;
+		unsigned char prev_hl = (i > 0) ? line->hl[i - 1] : Normal;
 		if(scs_len && !in_string){
 			if(!strncmp(&line->render[i], scs, scs_len)){
-				memset(&line->hl[i], HL_COMMENT, line->rendersize - i);
+				memset(&line->hl[i], Comment, line->rendersize - i);
 				break;
 			}
 		}
 		if(mcs_len && mce_len && !in_string && !in_string){
 			if(in_comment){
-				line->hl[i] = HL_MLCOMMENT;
+				line->hl[i] = MultiLineComment;
 				if(!strncmp(&line->render[i], mce, mce_len)){
-					memset(&line->hl[i], HL_MLCOMMENT, mce_len);
+					memset(&line->hl[i], MultiLineComment, mce_len);
 					i += mce_len;
 					in_comment = 0;
 					prev_sep = 1;
@@ -607,7 +615,7 @@ void UpdateSyntax(eline *line){
 					continue;
 				}
 			}else if(!strncmp(&line->render[i], mcs, mcs_len)){
-				memset(&line->hl[i], HL_MLCOMMENT, mcs_len);
+				memset(&line->hl[i], MultiLineComment, mcs_len);
 				i += mcs_len;
 				in_comment = 1;
 				continue;
@@ -615,9 +623,9 @@ void UpdateSyntax(eline *line){
 		}
 		if(config.syntax->flags & HighlightStrings){
 			if(in_string){
-				line->hl[i] = HL_STRING;
+				line->hl[i] = StringColor;
 				if(c == '\\' && i + 1 < line->rendersize){
-					line->hl[i + 1] = HL_STRING;
+					line->hl[i + 1] = StringColor;
 					i += 2;
 					continue;
 				}
@@ -628,15 +636,15 @@ void UpdateSyntax(eline *line){
 			}else{
 				if(c == '"' || c == '\''){
 					in_string = c;
-					line->hl[i] = HL_STRING;
+					line->hl[i] = StringColor;
 					i++;
 					continue;
 				}
 			}
 		}
 		if(config.syntax->flags & HighlightDigits){
-			if((isdigit(c) && (prev_sep || prev_hl == HL_NUMBER)) || (c == '.' && prev_hl == HL_NUMBER)) {
-				line->hl[i] = HL_NUMBER;
+			if((isdigit(c) && (prev_sep || prev_hl == Number)) || (c == '.' && prev_hl == Number)) {
+				line->hl[i] = Number;
 				i++;
 				prev_sep = 0;
 				continue;
@@ -649,7 +657,7 @@ void UpdateSyntax(eline *line){
 				int kw2 = keywords[j][klen - 1] == '|';
 				if(kw2) klen--;
 				if(!strncmp(&line->render[i], keywords[j], klen) && is_seperator(line->render[i + klen])){
-					memset(&line->hl[i], kw2 ? HL_KEYWORD2 : HL_KEYWORD1, klen);
+					memset(&line->hl[i], kw2 ? Types : Keywords, klen);
 					i += klen;
 					break;
 				}
@@ -670,13 +678,13 @@ void UpdateSyntax(eline *line){
 
 int SyntaxToColor(int hl){
 	switch(hl){
-		case HL_COMMENT:
-		case HL_MLCOMMENT: return UConfig.Comment_Color;
-		case HL_KEYWORD1: return UConfig.Keywords_Color;
-		case HL_KEYWORD2: return UConfig.Types_Color;
-		case HL_STRING: return UConfig.StringColor_;
-		case HL_NUMBER: return UConfig.Number_Color;
-		case HL_MATCH: return UConfig.Match_Color;
+		case Comment:
+		case MultiLineComment: return UConfig.Comment_Color;
+		case Keywords: return UConfig.Keywords_Color;
+		case Types: return UConfig.Types_Color;
+		case StringColor: return UConfig.StringColor_;
+		case Number: return UConfig.Number_Color;
+		case Match: return UConfig.Match_Color;
 		default: return UConfig.Normal_Color;
 	}
 }
@@ -957,7 +965,7 @@ void FindCallback(char *query, int key){
 			saved_hl_line = current;
 			saved_hl = malloc(line->rendersize);
 			memcpy(saved_hl, line->hl, line->rendersize);
-			memset(&line->hl[match - line->render], HL_MATCH, strlen(query));
+			memset(&line->hl[match - line->render], Match, strlen(query));
 			break;
 		}
 	}
@@ -1058,7 +1066,7 @@ void DrawLines(struct buffer *buff){
 						int clen = snprintf(buf, sizeof(buf), "\x1b[%dm", current_color);
 						AttachBuffer(buff, buf, clen);
 					}
-				}else if(hl[j] == HL_NORMAL){
+				}else if(hl[j] == Normal){
 					if(current_color != -1){
 						AttachBuffer(buff, "\x1b[39m", 5);
 						current_color = -1;
