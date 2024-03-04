@@ -8,6 +8,10 @@ If you downloaded jura from the AUR or follow the Extras guide you should be abl
 
 Type jura or ./jura (depending on your install) "editconfig" to adjust your configuration file
 
+You can also make your own configuration files and set them as the config with the "setconfig" command
+
+Type jura or ./jura "setconfig" "path/to/your/config"
+
 Use the arrows to traverse the lines.
 
 Use ctrl-S to save a file.

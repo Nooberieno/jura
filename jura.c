@@ -17,7 +17,7 @@
 
 /* defines */
 
-#define CurrentJuraVersion "3.1"
+#define CurrentJuraVersion "3.2"
 #define JuraTabStop 8
 #define JuraQuitTimes 1
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -36,25 +36,20 @@ typedef struct UserConfig{
 
 struct UserConfig UConfig;
 
-void SaveConfig(char *filename){
+void SaveConfig(UserConfig *config, char *filename){
 	FILE *file = fopen(filename, "w");
-	fprintf(file, "%d %d %d %d %d %d %d %s", 37, 36, 33, 34, 31, 35, 32, "-");
+	fprintf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
 	fclose(file);
 }
 
-void LoadConfig(UserConfig *config){
-	char *home_dir = getenv("HOME");
-	char config_path[256];
-	strcpy(config_path, home_dir);
-    strcat(config_path, "/config.jura");
-	FILE *file = fopen(config_path, "r");
+void LoadConfig(UserConfig *config, char *filename){
+	FILE *file = fopen(filename, "r");
 	if(file != NULL){
 		fscanf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
 		fclose(file);
 	}else{
-		SaveConfig(config_path);
-		FILE *file = fopen(config_path, "r");
-		fscanf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
+		FILE *file = fopen(filename, "r");
+		fscanf(file, "%d %d %d %d %d %d %d %s", 37, 36, 33, 34, 31, 35, 32, "-");
 		fclose(file);
 	}
 }
@@ -1308,7 +1303,11 @@ int main(int argc, char *argv[]){
 	char config_path[256];
 	strcpy(config_path, home_dir);
     strcat(config_path, "/config.jura");
-	LoadConfig(&UConfig);
+	if(argc == 3 && strcmp(argv[1], "setconfig") == 0){
+		LoadConfig(&UConfig, argv[2]);
+		SaveConfig(&UConfig, config_path);
+	}
+	LoadConfig(&UConfig, config_path);
 	if(argc == 2 && strcmp(argv[1], "editconfig") == 0){
 		Open(config_path);
 	}else if(argc >= 2){

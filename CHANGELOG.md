@@ -73,3 +73,8 @@ Added a config file in the users home folder that jura creates on first startup
 Added an editconfig command. 
 
 type jura or ./jura (depending on your installation) followed by "editconfig" to adjust your config file
+
+# 3.2
+Added an editconfig command. 
+
+type jura or ./jura (depending on your installation) followed by "editconfig" to adjust your config file
