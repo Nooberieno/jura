@@ -21,6 +21,35 @@
 #define JuraTabStop 8
 #define JuraQuitTimes 1
 #define CTRL_KEY(k) ((k) & 0x1f)
+#define FirstCharLength 2
+
+typedef struct UserConfig{
+	int Normal_Color;
+	int Comment_Color;
+	int Keywords_Color;
+	int Types_Color;
+	int StringColor_;
+	int Number_Color;
+	int Match_Color;
+	char First_Char[FirstCharLength];
+}UserConfig;
+
+struct UserConfig UConfig;
+
+void LoadConfig(UserConfig *config){
+	FILE *file = fopen("config.jura", "r");
+	if(file != NULL){
+		fscanf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
+		fclose(file);
+	}else{
+		FILE *file = fopen("config.jura", "w");
+		fprintf(file, "%d %d %d %d %d %d %d %s", 37, 36, 33, 34, 31, 35, 32, "-");
+		fclose(file);
+		FILE *file1 = fopen("config.jura", "r");
+		fscanf(file1, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
+		fclose(file1);
+	}
+}
 
 enum Key{
 	BACKSPACE = 127,
@@ -642,13 +671,13 @@ void UpdateSyntax(eline *line){
 int SyntaxToColor(int hl){
 	switch(hl){
 		case HL_COMMENT:
-		case HL_MLCOMMENT: return 36;
-		case HL_KEYWORD1: return 33;
-		case HL_KEYWORD2: return 32;
-		case HL_STRING: return 35;
-		case HL_NUMBER: return 31;
-		case HL_MATCH: return 34;
-		default: return 37;
+		case HL_MLCOMMENT: return UConfig.Comment_Color;
+		case HL_KEYWORD1: return UConfig.Keywords_Color;
+		case HL_KEYWORD2: return UConfig.Types_Color;
+		case HL_STRING: return UConfig.StringColor_;
+		case HL_NUMBER: return UConfig.Number_Color;
+		case HL_MATCH: return UConfig.Match_Color;
+		default: return UConfig.Normal_Color;
 	}
 }
 
@@ -1267,6 +1296,7 @@ void init(){
 int main(int argc, char *argv[]){
 	enableRawMode();
 	init();
+		LoadConfig(&UConfig);
 	if(argc >= 2){
 		Open(argv[1]);
 	}
