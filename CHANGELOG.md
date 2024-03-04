@@ -68,3 +68,8 @@ jura now supports PHP, Ruby and Kotlin
 
 # 3.0
 Added a config file in the users home folder that jura creates on first startup
+
+# 3.1
+Added an editconfig command. 
+
+type jura or ./jura (depending on your installation) followed by "editconfig" to adjust your config file

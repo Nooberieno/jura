@@ -1,10 +1,12 @@
 # jura
 A small lightweight text editor like nano.
 
-# Usage
+# Usage(applies to the latest version)
 Type ./jura "filename" note that this only works in the folder the binary is located in. to change this behaviour download jura from the AUR or follow the Extra Setup guide.
 
 If you downloaded jura from the AUR or follow the Extras guide you should be able to type jura "filename"
+
+Type jura or ./jura (depending on your install) "editconfig" to adjust your configuration file
 
 Use the arrows to traverse the lines.
 

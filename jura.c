@@ -17,7 +17,7 @@
 
 /* defines */
 
-#define CurrentJuraVersion "3.0"
+#define CurrentJuraVersion "3.1"
 #define JuraTabStop 8
 #define JuraQuitTimes 1
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -1304,8 +1304,14 @@ void init(){
 int main(int argc, char *argv[]){
 	enableRawMode();
 	init();
-		LoadConfig(&UConfig);
-	if(argc >= 2){
+	char *home_dir = getenv("HOME");
+	char config_path[256];
+	strcpy(config_path, home_dir);
+    strcat(config_path, "/config.jura");
+	LoadConfig(&UConfig);
+	if(argc == 2 && strcmp(argv[1], "editconfig") == 0){
+		Open(config_path);
+	}else if(argc >= 2){
 		Open(argv[1]);
 	}
 	SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find");
