@@ -36,24 +36,36 @@ typedef struct UserConfig{
 
 struct UserConfig UConfig;
 
-void SaveConfig(UserConfig *config, char *filename){
+void DefaultConfig(){
+	char *home_dir = getenv("HOME");
+	char config_path[256];
+	strcpy(config_path, home_dir);
+    strcat(config_path, "/config.jura");
+	FILE *file = fopen(config_path, "w");
+	fprintf(file, "%d %d %d %d %d %d %d %s", 37, 36, 33, 34, 31, 35, 32, "-");
+	fclose(file);
+}
+
+void SaveConfig(struct UserConfig *config, char *filename){
 	FILE *file = fopen(filename, "w");
 	fprintf(file, "%d %d %d %d %d %d %d %s", config->Normal_Color, config->Comment_Color, config->Keywords_Color, config->Types_Color, config->StringColor_, config->Number_Color, config->Match_Color, config->First_Char);
 	fclose(file);
 }
 
-void LoadConfig(UserConfig *config, char *filename){
+void LoadConfig(struct UserConfig *config, char *filename){
 	FILE *file = fopen(filename, "r");
 	if(file != NULL){
 		fscanf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
 		fclose(file);
 	}else{
-		FILE *file = fopen(filename, "w");
-		fprintf(file, "%d %d %d %d %d %d %d %s", 37, 36, 33, 34, 31, 35, 32, "-");
+		DefaultConfig();
+		char *home_dir = getenv("HOME");
+		char config_path[256];
+		strcpy(config_path, home_dir);
+    	strcat(config_path, "/config.jura");
+		FILE *file = fopen(config_path, "r");
+		fscanf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
 		fclose(file);
-		FILE *file1 = fopen(filename, "r");
-		fscanf(file1, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
-		fclose(file1);
 	}
 }
 
@@ -484,6 +496,10 @@ char *Prompt(char *prompt, void (*callback)(char *, int));
 void die(const char *s){
 	write(STDOUT_FILENO, "\x1b[2J", 4);
 	write(STDOUT_FILENO, "\x1b[H", 3);
+	if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &config.og_terminal) == -1){
+		perror("tcsetattr");
+		exit(1);
+	}
 	perror(s);
 	exit(1);
 }
@@ -1307,12 +1323,27 @@ int main(int argc, char *argv[]){
 	strcpy(config_path, home_dir);
     strcat(config_path, "/config.jura");
 	if(argc == 3 && strcmp(argv[1], "setconfig") == 0){
-		LoadConfig(&UConfig, argv[2]);
-		SaveConfig(&UConfig, config_path);
+		if(strcmp(argv[2], "default") == 0){
+			DefaultConfig();
+		}else{
+			printf("Attempting to open config file: %s\n", argv[2]);
+			LoadConfig(&UConfig, argv[2]);
+			SaveConfig(&UConfig, config_path);
+		}
+		printf("config updated succesfully");
+		return 0;
 	}
 	LoadConfig(&UConfig, config_path);
-	if(argc == 2 && strcmp(argv[1], "editconfig") == 0){
+	if (argc == 2 && (strcmp(argv[1], "editconfig") == 0)){
 		Open(config_path);
+	}else if(argc == 2 && strcmp(argv[1], "makeconfig") == 0){
+		FILE *file = fopen(config_path, "r");
+		if(file != NULL){
+			printf("Config already exists");
+		}else{
+			printf("Made config file");
+		}
+		return 0;
 	}else if(argc >= 2){
 		Open(argv[1]);
 	}

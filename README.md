@@ -12,6 +12,10 @@ You can also make your own configuration files and set them as the config with t
 
 Type jura or ./jura "setconfig" "path/to/your/config"
 
+You can use the "setconfig" "default" command to restore the default configuration in jura.
+
+you can use the "makeconfig" command to create the config file if it does not already exists.
+
 Use the arrows to traverse the lines.
 
 Use ctrl-S to save a file.
@@ -113,7 +117,5 @@ Somewhere in version three jura will get a wiki with the primary focus on showin
 
 # Bugs
 This section contains the current known major bugs and are being worked on.
-
-Terminal does not get properly restored after an error has been thrown.
 
 The editor does not update in size after the terminal or terminal emulator changes size.
