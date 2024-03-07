@@ -93,3 +93,10 @@ type ./jura makeconfig to ensure the config exists, if not it will be created
 fixed a bug that did not allow for a custom config to be set if it was outside of the folder where the binary was made
 
 fixed the bug that did not restore the terminal emulator properly
+
+# 3.4
+fixed a bug that caused the empty line character from the config to not actually be displayed
+
+removed some old code that reused certain libraries and declared unused variable
+
+added documentation to make the code more accesable

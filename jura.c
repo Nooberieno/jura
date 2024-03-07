@@ -17,7 +17,7 @@
 
 /* defines used throughout the program */
 
-#define CurrentJuraVersion "3.3" //version that shows on startup
+#define CurrentJuraVersion "3.4" //version that shows on startup
 #define JuraTabStop 8 // how large the tab size is
 #define JuraQuitTimes 1 //how many times needed to close the programing when not saving
 #define CTRL_KEY(k) ((k) & 0x1f) //Control key input shortcut
