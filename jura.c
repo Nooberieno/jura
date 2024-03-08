@@ -1342,7 +1342,7 @@ int main(int argc, char *argv[]){
 			LoadConfig(&UConfig, argv[2]); //load the users config file
 			SaveConfig(&UConfig, config_path); //save the setting from the users config file to the config.jura file
 		}
-		printf("config updated succesfully"); //print this if everything went right
+		printf("config updated succesfully\n"); //print this if everything went right
 		return 0; //exit the program
 	}
 	LoadConfig(&UConfig, config_path); //load the settings from the config file
@@ -1351,9 +1351,9 @@ int main(int argc, char *argv[]){
 	}else if(argc == 2 && strcmp(argv[1], "makeconfig") == 0){ //check if the user provided the makeconfig command
 		FILE *file = fopen(config_path, "r"); //check for the file
 		if(file != NULL){ //if it extists
-			printf("Config already exists");
+			printf("Config already exists\n");
 		}else{ //if the config does not exists
-			printf("Made config file");
+			printf("Made config file\n");
 		}
 		return 0; //exit the program
 	}else if(argc >= 2){ //check if the user provided a filename
