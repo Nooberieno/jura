@@ -1,6 +1,19 @@
+<div align = center>
+  
 <img src="https://github.com/Nooberieno/jura/assets/124163902/b6c38f9d-1d98-4a23-94e3-f9a075a83c6b" height="500" width="500">
 
+<br>  
+
+![Static Badge](https://img.shields.io/badge/License-MIT-lightgreen?link=!%5BStatic%20Badge%5D(https%3A%2F%2Fimg.shields.io%2Fbadge%2F%3AbadgeContent%3Flink%3Dhttps%253A%252F%252Fgithub.com%252FNooberieno%252Fjura%252Fblob%252Fmain%252FLICENSE)) 
+![Static Badge](https://img.shields.io/badge/official_wiki-yellow?link=https%3A%2F%2Fgithub.com%2FNooberieno%2Fjura%2Fwiki)
+![Static Badge](https://img.shields.io/badge/issues-red?link=https%3A%2F%2Fgithub.com%2FNooberieno%2Fjura%2Fissues)
+![Static Badge](https://img.shields.io/badge/AUR-jura-blue?logo=arch-linux&logoColor=1793d1&link=https%3A%2F%2Faur.archlinux.org%2Fpackages%2Fjura)
+
+</br>
+
 # jura, a small lightweight terminal text editor
+
+</div>
 
 # what is jura?
 jura is a small program designed to quickly edit files from the terminal  
@@ -23,4 +36,5 @@ report any bugs or issues here https://github.com/Nooberieno/jura/issues
 the jura installation guide you can check the wiki https://github.com/Nooberieno/jura/wiki/Installation
 
 # support
-all support for jura should requested following the [security policy](https://github.com/Nooberieno/jura/blob/main/SECURITY.md)
+all support for jura should requested by following the [security policy](https://github.com/Nooberieno/jura/blob/main/SECURITY.md)
+
