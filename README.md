@@ -35,6 +35,6 @@ report any bugs or issues here https://github.com/Nooberieno/jura/issues
 # installation
 the jura installation guide you can check the wiki https://github.com/Nooberieno/jura/wiki/Installation
 
-# support
-all support for jura should requested by following the [security policy](https://github.com/Nooberieno/jura/blob/main/SECURITY.md)
+# bug/issues support
+all bugs/issues for jura should reported by following the [security policy](https://github.com/Nooberieno/jura/blob/main/SECURITY.md)
 
