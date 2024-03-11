@@ -175,7 +175,7 @@ char *JSKeywords[] = {
 	"break", "case", "catch", "class", "const", "continue", "debugger", "default", "delete", "do", "else", "export", "extends", "finally", "for", "function", "if",
 	"import", "in", "instanceof", "new", "return", "super", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "yield", NULL
 };
-char *TSExtensions[] = {"ts", ".ts", NULL};
+char *TSExtensions[] = {".ts", NULL};
 char *TSKeywords[] = {
 	"break", "case", "catch", "class", "const", "continue", "debugger", "default", "delete", "do", "else", "export", "extends", "finally", "for", "function", "if",
 	"import", "in", "instanceof", "new", "return", "super", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "yield", "type", "interface",
@@ -203,7 +203,7 @@ char *GoKeywords[] = {
 	"bool|", "byte|", "complex64|", "complex128|", "error|", "float32|", "float64|", "int|", "int8|", "int16|", "int32|", "int64|", "rune|", "string|", "uint|", "uint8|", "uint16|", "uint32|", "uint64|", "uintptr|", NULL
 
 };
-char *SwiftExtensions[] = {".swift", ".xcodeproj", ".storyboard", ".xib", ".xcdatamodeld", NULL};
+char *SwiftExtensions[] = {".swift", NULL};
 char *SwiftKeywords[] = {
 	"associatedtype", "break", "case", "catch", "class", "continue", "convenience", "deinit", "didSet", "do", "else", "enum", "extension", "fallthrough", "final", "for", "func", "guard", "if", "import", "in", "indirect", "init", "inout", "internal", "is", "as", "lazy", "let", "localized", "mutating", "nil", "nonce", "nonisolated", "objc", "open", "optional", "override", "postfix", "precedencegroup", "private", "protocol", "public", "required", "rethrows", "return", "self", "set", "some", "static", "struct", "subscript", "super", "switch", "synchronized", "throw", "throws", "try", "typealias", "var", "weak", "where", "while", "willSet",
 	"Bool|", "Double|", "Float|", "Int|", "Int8|", "Int16|", "Int32|", "Int64|", "String|", "UInt|", "UInt8|", "UInt16|", "UInt32|", "UInt64|", "Character|", "Any|", "AnyObject|", "Array|", "Dictionary|", "FloatingPointNumber|", "Hashable|", "IntegerLiteralConvertible|", "Numeric|", "Optional|", "Range|", "RawRepresentable|", "Sequence|", "SignedNumeric|", "Strideable|", "Subscript|", "Comparable|", "Codable|", "Decodable|", "Encodable|", "Error|", "UnsafeMutableRawPointer|", "UnsafeMutableRawBufferPointer|", "UnsafePointer|", "UnsafeRawBufferPointer|", NULL
@@ -323,7 +323,7 @@ char *KotlinKeywords[] = {
 };
 
 char *TextExtensions[] = {".txt", NULL};
-char *BinaryExtensions[] = {".appimage", ".AppImage", "Appimage", NULL};
+char *BinaryExtensions[] = {".AppImage", NULL};
 char *ShellExtensions[] = {".sh", NULL};
 
 struct Syntax SyntaxDatabase[] = {
