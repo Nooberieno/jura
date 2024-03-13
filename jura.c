@@ -1361,8 +1361,14 @@ int main(int argc, char *argv[]){
 	}
 	SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find"); //set the base status message that shows the commands
 	while (1){ //main loop for running the programming
-		RefreshScreen();
-		ProcessKeypress();
+	//update the windowsize
+	struct winsize ws;
+	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) != -1 && ws.ws_col != config.screencols && ws.ws_row != config.screenlines){//check if the windowsize has changed
+		if(getWindowSize(&config.screenlines, &config.screencols) == -1) die("getWindowSize"); //update the windowsize
+		config.screenlines -= 2;//make room for the status and message bar
+	}
+		RefreshScreen();//update the contents of the screen
+		ProcessKeypress();//handle the keypresses of the users
 	}
     return 0; //exit the program if the main loop has finished (Ctrl + q has been pressed)
 }
