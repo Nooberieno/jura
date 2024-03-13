@@ -15,26 +15,29 @@
 
 </div>
 
-# what is jura?
+# What is jura?
 jura is a small program designed to quickly edit files from the terminal  
 jura was designed to be an alternative to programs like nano, vi, vim, neovim and pico
 
 jura is distributed under the [MIT license](https://github.com/Nooberieno/jura/blob/main/LICENSE)  
 for more information check the [official wiki](https://github.com/Nooberieno/jura/wiki)
 
-## example of jura use
+## Example of jura use
 [![asciicast](https://asciinema.org/a/645939.svg)](https://asciinema.org/a/645939)
 
-# quick links
+# Quick links
 for any information you can reference the official wiki at https://github.com/Nooberieno/jura/wiki, this tells you how to install, setup and use jura  
 
 jura is officially available via the AUR at https://aur.archlinux.org/packages/jura, jura is not officially available anywhere else  
 
 report any bugs or issues here https://github.com/Nooberieno/jura/issues
 
-# installation
+# Installation
 the jura installation guide you can check the wiki https://github.com/Nooberieno/jura/wiki/2.-Installation-and-updates
 
-# bug/issues support
+# Bug/Issues support
 all bugs/issues for jura should reported by following the [security policy](https://github.com/Nooberieno/jura/blob/main/SECURITY.md)
+
+# Contributing
+if you want to learn how to contribute to jura please check out the wiki's [contributing page](https://github.com/Nooberieno/jura/wiki/Contributing)
 
