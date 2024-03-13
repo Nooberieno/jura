@@ -21,7 +21,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
- - Version [e.g. 1.2]
+ - Version of jura [e.g. 1.2]
 
 **Source Code**
 If you think you know what code caused the issue please share it here
