@@ -11,9 +11,8 @@ This also means that I will not be updating older versions of jura as the bugs l
 
 | Version | Supported          |
 | ------- | -----------------  |
-| 3.x     | ✅                 |
-| 2.x     | ❌                 |
-| 1.x     | ❌                 |
+| latest    | ✅                 |
+| older  | ❌                 |
 
 ## Reporting a Vulnerability
 
@@ -25,12 +24,12 @@ If they are not in the bugs section you may post them to the issues tab or email
 
 Please include as much of the information listed below as you can to help us better understand and resolve the issue:
 
-    The type of issue(e.g. stack overflow, code injection, segmentation fault)
-    The part of the source code you believe to be the issue in function names or line numbers(if possible)
-    Any special configuration to reproduce the issue
-    A step-by-step guide on how to recreate the issue(if possible)
-    Proof of concept or code exploit(if possible)
-    The impact of the issue if you are posting it to the issues tab(e.g. minor, major, critical, quality of life)
+   * The type of issue(e.g. stack overflow, code injection, segmentation fault)
+   * The part of the source code you believe to be the issue in function names or line numbers(if possible)
+   * Any special configuration to reproduce the issue
+   * A step-by-step guide on how to recreate the issue(if possible)
+   * Proof of concept or code exploit(if possible)
+   * The impact of the issue if you are posting it to the issues tab(e.g. minor, major, critical, quality of life)
 
 Providing this info will help me in solving vulnerabilities as quickly and efficiently as possible
 
