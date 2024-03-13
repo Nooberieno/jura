@@ -100,3 +100,11 @@ fixed a bug that caused the empty line character from the config to not actually
 removed some old code that reused certain libraries and declared unused variable
 
 added documentation to make the code more accesable
+
+# 3.5
+this release introduces the official jura wiki found at https://github.com/Nooberieno/jura/wiki  
+and added more support for the community on the github repository
+
+**Bug fixes**
+fixed the bug that did not resize the editor in jura when the terminal changes, but it does require a keypress to update
+fixed a visual bug that made the terminal layout look weird when using print statements in the code
