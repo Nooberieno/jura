@@ -17,7 +17,7 @@
 
 # What is jura?
 jura is a small program designed to quickly edit files from the terminal  
-jura was designed to be an alternative to programs like nano, vi, vim, neovim and pico
+jura was designed to be minimal and simple to use for people who are new to the terminal
 
 jura is distributed under the [MIT license](https://github.com/Nooberieno/jura/blob/main/LICENSE)  
 for more information check the [official wiki](https://github.com/Nooberieno/jura/wiki)
