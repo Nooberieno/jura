@@ -38,6 +38,24 @@ the jura installation guide you can check the wiki https://github.com/Nooberieno
 # Bug/Issues support
 all bugs/issues for jura should reported by following the [security policy](https://github.com/Nooberieno/jura/blob/main/SECURITY.md)
 
+# Roadmap
+a list of all features that I want to add to jura
+## Installation
+- [ ] implement a build system, to make installing on other operating system more user-friendly
+## Configuration
+- [ ] rework the configuration system
+- [ ] allow the keybinds to be configurable to a certain degree (like all keybinds being Ctrl + a key that can be configured)
+## Expanding core features
+- [ ] Ctrl + G to go to a specific line
+- [ ] text selection with the keyboard, potentially using Ctrl + Arrow keys
+- [ ] copy and paste without relying on the text selection of the mouse and terminal emulator
+- [ ] changing the copy and paste keybinds to Ctrl + C and Ctrl + V
+## Not certain yet
+these feature suggestion are **not** confirmed yet, but may be implemented in the future
+- [ ] versions of jura made and tested for Windows and MacOS
+- [ ] OS detection + specialized keybinds
+- [ ] plugins to extend jura's functionality
+
 # Contributing
 if you want to learn how to contribute to jura please check out the wiki's [contributing page](https://github.com/Nooberieno/jura/wiki/Contributing)
 
