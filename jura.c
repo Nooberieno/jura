@@ -24,7 +24,6 @@
 #define FirstCharLength 2 //length of the empty line character
 
 typedef struct UserConfig{ //contains everything that can be configured
-	int Normal_Color;
 	int Comment_Color;
 	int Keywords_Color;
 	int Types_Color;
@@ -42,20 +41,20 @@ void DefaultConfig(){ //loads the default values in the config.jura file that ju
 	strcpy(config_path, home_dir);
     strcat(config_path, "/config.jura");
 	FILE *file = fopen(config_path, "w");
-	fprintf(file, "%d %d %d %d %d %d %d %s", 37, 36, 33, 34, 31, 35, 32, "-");
+	fprintf(file, "%d\n%d\n%d\n%d\n%d\n%d\n%s", 36, 33, 34, 31, 35, 32, "-");
 	fclose(file);
 }
 
 void SaveConfig(struct UserConfig *config, char *filename){ //saves a file to the config container
 	FILE *file = fopen(filename, "w");
-	fprintf(file, "%d %d %d %d %d %d %d %s", config->Normal_Color, config->Comment_Color, config->Keywords_Color, config->Types_Color, config->StringColor_, config->Number_Color, config->Match_Color, config->First_Char);
+	fprintf(file, "%d\n%d\n%d\n%d\n%d\n%d\n%s", config->Comment_Color, config->Keywords_Color, config->Types_Color, config->StringColor_, config->Number_Color, config->Match_Color, config->First_Char);
 	fclose(file);
 }
 
 void LoadConfig(struct UserConfig *config, char *filename){ //loads a config file to the config container
 	FILE *file = fopen(filename, "r");
 	if(file != NULL){
-		fscanf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
+		fscanf(file, "%d\n%d\n%d\n%d\n%d\n%d\n%s", &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
 		fclose(file);
 	}else{ //if the configuration is empty load the default configuration and load them into the config container
 		DefaultConfig();
@@ -64,7 +63,7 @@ void LoadConfig(struct UserConfig *config, char *filename){ //loads a config fil
 		strcpy(config_path, home_dir);
     	strcat(config_path, "/config.jura");
 		FILE *file = fopen(config_path, "r");
-		fscanf(file, "%d %d %d %d %d %d %d %s", &config->Normal_Color, &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
+		fscanf(file, "%d\n%d\n%d\n%d\n%d\n%d\n%s", &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
 		fclose(file);
 	}
 }
@@ -700,7 +699,7 @@ int SyntaxToColor(int hl){ //return the color that matches with the config
 		case StringColor: return UConfig.StringColor_;
 		case Number: return UConfig.Number_Color;
 		case Match: return UConfig.Match_Color;
-		default: return UConfig.Normal_Color;
+		default: return 37;
 	}
 }
 
