@@ -1013,6 +1013,17 @@ void Find(){
 	}
 }
 
+void Golf(){
+	char *query = Prompt("Go to line: %s (ESC to cancel)", NULL);
+	if(query == NULL) return;
+	int i = atoi(query);
+	if(i < config.numlines){
+		config.y = i;
+		config.x = 0;
+	}
+	free(query);
+}
+
 /* append buffer */
 
 struct buffer{ //define a buffer which can hold a bunch of characters and the length
