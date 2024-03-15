@@ -1014,14 +1014,18 @@ void Find(){
 }
 
 void Golf(){
-	char *query = Prompt("Go to line: %s (ESC to cancel)", NULL);
-	if(query == NULL) return;
-	int i = atoi(query);
-	if(i < config.numlines){
-		config.y = i;
+	char *query = Prompt("Go to line: %s (ESC to cancel)", NULL);//make the user enter in a prompt and store it
+	if(query == NULL) return;//if the query is NULL the user pressed ESC so return
+	int i = atoi(query);//extract a valid integer from the query (an input that is not a number becomes zero)
+	if(i == 0 || i > config.numlines){//check if the line number is possible(not zero and not exceeding the amount of lines in the file)
+		SetStatusMessage("Not a valid line number");//tell the user why the function failed
+		free(query);//free the query memory
+		return;//exit the function
+	}else if(i > 0 && i < config.numlines){//check if the line number is valid
+		config.y = i - 1;//move the cursor to that line
 		config.x = 0;
 	}
-	free(query);
+	free(query);//free the query memory
 }
 
 /* append buffer */
@@ -1277,11 +1281,15 @@ void ProcessKeypress(){
 		break;
 	case CTRL_KEY('s'): //Ctrl + s
 		Save(); 
-		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find"); //set the base status message
+		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find | Ctrl-G = go to line"); //set the base status message
 		break;
 	case CTRL_KEY('f'): //Ctrl + f
 		Find(); //search for specific text
-		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find"); //set the base status message
+		SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find | Ctrl-G = go to line"); //set the base status message
+		break;
+	case CTRL_KEY('g'): //Ctrl + g
+		Golf(); //go to a specific line
+		//the golf function sets a statusmessage so we dont set the base status message
 		break;
 	case BACKSPACE:
 	case CTRL_KEY('h'):
@@ -1370,7 +1378,7 @@ int main(int argc, char *argv[]){
 	}else if(argc >= 2){ //check if the user provided a filename
 		Open(argv[1]); //if so open that file
 	}
-	SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find"); //set the base status message that shows the commands
+	SetStatusMessage("Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find | Ctrl-G = go to line"); //set the base status message that shows the commands
 	while (1){ //main loop for running the programming
 	//update the windowsize
 	struct winsize ws;
