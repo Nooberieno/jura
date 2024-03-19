@@ -55,6 +55,7 @@ these feature suggestion are **not** confirmed yet, but may be implemented in th
 - [ ] versions of jura made and tested for Windows and MacOS
 - [ ] OS detection + specialized keybinds
 - [ ] plugins to extend jura's functionality
+- [ ] a way to open multiple files and switch between them
 
 # Contributing
 if you want to learn how to contribute to jura please check out the wiki's [contributing page](https://github.com/Nooberieno/jura/wiki/Contributing)
