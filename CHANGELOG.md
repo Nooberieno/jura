@@ -111,3 +111,10 @@ fixed a visual bug that made the terminal layout look weird when using print sta
 
 # 4.0
 this release adds the feature to go to a specific line with the Ctrl + G keybind
+
+# 4.1
+release before major rewrites
+small changes the configuration, so that the base/normal color cannot be changed and the config is formated slightly differently
+
+**Bug Fixes**
+fixed a bug where 
