@@ -123,7 +123,7 @@ void SelectSyntaxHighlight(){ //Set the syntax highlight according to the file e
 			config.syntax = s;
 			int fileline = 0;
 			for(fileline < config.numlines; fileline++;) UpdateSyntax(&config.line[fileline]);
-			i++;
 		}
+		i++;
 	}
 }	

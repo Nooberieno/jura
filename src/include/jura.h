@@ -6,7 +6,7 @@
 #define _GNU_SOURCE
 
 #define CurrentJuraVersion "5.0"
-#define JuraTabStop 8
+#define JuraTabStop 4
 #define CTRL_KEY(k) (k & 0x1f)
 
 typedef enum Key{
