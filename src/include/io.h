@@ -1,10 +1,10 @@
 #ifndef IO_H
 #define IO_H
 
-char *LinesToString(int *buflen);
+extern char *LinesToString(int *buflen);
 
-void Open(char *filename);
+extern void Open(char *filename);
 
-void Save();
+extern void Save();
 
 #endif

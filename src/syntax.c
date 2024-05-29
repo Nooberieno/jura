@@ -1,16 +1,7 @@
 #include <stdio.h>
 
 #include "include/syntax.h"
-
-struct Syntax{ //track everything needed to change the syntax color
-	char *filetype;
-	char **filematch;
-	char **keywords;
-	char *singleline_comment_start;
-	char *multiline_comment_start;
-	char *multiline_comment_end;
-	int flags;
-};
+#include "include/config.h"
 
 char *CExtensions[] = {".c", ".h", NULL};
 char *CKeywords[] = {
@@ -200,7 +191,7 @@ char *TextExtensions[] = {".txt", NULL};
 char *BinaryExtensions[] = {".AppImage", NULL};
 char *ShellExtensions[] = {".sh", NULL};
 
-struct Syntax SyntaxDatabase[] = {
+extern Syntax SyntaxDatabase[] = {
 	{
 		"c",
 		CExtensions,

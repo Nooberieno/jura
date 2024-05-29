@@ -22,7 +22,7 @@ typedef struct Syntax{ //track everything needed to change the syntax color
 	char *multiline_comment_start;
 	char *multiline_comment_end;
 	int flags;
-};
+}Syntax;
 
 typedef struct Config{ //contains everything needed for the editor
 	int x, y;
@@ -39,8 +39,8 @@ typedef struct Config{ //contains everything needed for the editor
 	time_t statusmsg_time;
 	struct Syntax *syntax;
 	struct termios og_terminal;
-};
+}Config;
 
-struct Config config;
+extern Config config;
 
 #endif

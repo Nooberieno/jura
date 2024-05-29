@@ -1,6 +1,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <sys/ioctl.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "include/config.h"
 #include "include/jura.h"
@@ -63,6 +65,7 @@ int ReadKey(){ //read the keypresses from the users and check for certain modifi
 		case '6': return PAGE_DOWN;
 		}
 	}
+	return '\x1b';
 }
 
 int getCursorPosition(int *lines, int *cols){ //use the ANSI escape sequence to get the cursor position in the terminal

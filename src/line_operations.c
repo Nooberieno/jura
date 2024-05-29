@@ -1,3 +1,5 @@
+#include <string.h>
+#include <stdlib.h>
 
 #include "include/syntax_highlighting.h"
 #include "include/config.h"
@@ -21,8 +23,8 @@ int LineRenderxToX(eline *line, int renderx){ //Convert the X coordinate that is
 			if(line->chars[x] == '\t') cur_renderx += (JuraTabStop - 1) - (cur_renderx % JuraTabStop);
 			cur_renderx++;
 		}
-		return x;
 	}
+	return x;
 }
 
 void UpdateLine(eline *line){ //Update how the line gets rendered

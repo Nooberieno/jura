@@ -1,24 +1,24 @@
 #ifndef LINE_OPS_H
 #define LINE_OPS_H
 
-#include "include/config.h"
+#include "config.h"
 
-int LineXToRenderx(eline *line, int x);
+extern int LineXToRenderx(eline *line, int x);
 
-int LineRenderxToX(eline *line, int renderx);
+extern int LineRenderxToX(eline *line, int renderx);
 
-void UpdateLine(eline *line);
+extern void UpdateLine(eline *line);
 
-void InsertLine(int at, char *s, size_t len);
+extern void InsertLine(int at, char *s, size_t len);
 
-void FreeLine(eline *line);
+extern void FreeLine(eline *line);
 
-void RemoveLine(int at);
+extern void RemoveLine(int at);
 
-void LineInsertChar(eline *line, int at, int c);
+extern void LineInsertChar(eline *line, int at, int c);
 
-void LineAppendString(eline *line, char *s, size_t len);
+extern void LineAppendString(eline *line, char *s, size_t len);
 
-void LineRemoveChar(eline *line, int at);
+extern void LineRemoveChar(eline *line, int at);
 
 #endif

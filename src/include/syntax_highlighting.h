@@ -12,12 +12,12 @@ typedef enum Highlight{ //things that need to be highlighted
 	StringColor,
 	Number,
 	Match
-};
+}Highlight;
 
-int is_seperator(int c);
+extern int is_seperator(int c);
 
-void UpdateSyntax(eline *line);
+extern void UpdateSyntax(eline *line);
 
-void SelectSyntaxHighlight();
+extern void SelectSyntaxHighlight();
 
 #endif

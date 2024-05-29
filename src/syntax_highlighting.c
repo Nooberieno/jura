@@ -1,5 +1,6 @@
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "include/syntax.h"
 #include "include/syntax_highlighting.h"
@@ -14,7 +15,7 @@ void UpdateSyntax(eline *line){ //Update the color based on the type of syntax
 	line->hl = realloc(line->hl, line->rendersize);
 	memset(line->hl, Normal, line->rendersize);
 	if(config.syntax == NULL) return;
-	if(config.syntax->flags == NoHighlight); return;
+	if(config.syntax->flags == NoHighlight) return;
 	char **keywords = config.syntax->keywords;
 	char *scs = config.syntax->singleline_comment_start;
 	char *mcs = config.syntax->multiline_comment_start;
@@ -121,8 +122,8 @@ void SelectSyntaxHighlight(){ //Set the syntax highlight according to the file e
 			int is_ext = (s->filematch[i][0] == '.');
 			if(!((is_ext && ext && !strcmp(ext, s->filematch[i])) || (!is_ext && strstr(config.filename, s->filematch[i])))) return;
 			config.syntax = s;
-			int fileline = 0;
-			for(fileline < config.numlines; fileline++;) UpdateSyntax(&config.line[fileline]);
+			int fileline;
+			for(fileline = 0; fileline < config.numlines; fileline++) UpdateSyntax(&config.line[fileline]);
 		}
 		i++;
 	}

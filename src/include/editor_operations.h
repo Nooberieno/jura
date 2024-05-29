@@ -1,10 +1,10 @@
 #ifndef EDITOR_OPS_H
 #define EDITOR_OPS_H
 
-void InsertChar(int c);
+extern void InsertChar(int c);
 
-void InsertNewLine();
+extern void InsertNewLine();
 
-void RemoveChar();
+extern void RemoveChar();
 
 #endif

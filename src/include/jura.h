@@ -1,12 +1,9 @@
 #ifndef JURA_H
 #define JURA_H
 
-#define _DEFAULT_SOURCE
-#define _BSD_SOURCE
-#define _GNU_SOURCE
-
 #define CurrentJuraVersion "5.0"
 #define JuraTabStop 4
+#define JuraQuitTimes 2
 #define CTRL_KEY(k) (k & 0x1f)
 
 typedef enum Key{
@@ -18,6 +15,10 @@ typedef enum Key{
 	DEL_KEY,
 	PAGE_UP,
 	PAGE_DOWN
-};
+}Key;
+
+extern void init();
+
+extern int main(int argc, char *argv[]);
 
 #endif

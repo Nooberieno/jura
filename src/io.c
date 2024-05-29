@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include "include/io.h"
 #include "include/config.h"
@@ -10,6 +11,7 @@
 #include "include/line_operations.h"
 #include "include/input.h"
 #include "include/output.h"
+#include "include/terminal.h"
 
 char *LinesToString(int *buflen){ //Convert all of the lines into a string
 	int totlen = 0;
@@ -57,9 +59,9 @@ void Save(){ //Save a file
 	int len;
 	char *buf = LinesToString(&len);
 	int fd = open(config.filename, O_RDWR | O_CREAT, 0644);
-	if(fd == -1) fclose(fd);
+	if(fd == -1) close(fd);
 	else if(ftruncate(fd, len) != -1 && write(fd, buf, len) == len){
-		fclose(fd);
+		close(fd);
 		free(buf);
 		config.mod = 0;
 		SetStatusMessage("%d bytes written to disk", len);
