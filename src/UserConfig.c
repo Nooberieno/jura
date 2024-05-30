@@ -5,6 +5,8 @@
 #include "include/UserConfig.h"
 #include "include/syntax_highlighting.h"
 
+UserConfig UConfig;
+
 void DefaultConfig(){ //Sets the default config
 	char *home_dir = getenv("HOME");
 	char config_path[256];

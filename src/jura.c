@@ -12,7 +12,6 @@
 #include "include/io.h"
 #include "include/input.h"
 
-struct Config config;
 
 void init(){ //Intialize the editor config
 	config.x = 0;

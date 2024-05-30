@@ -6,7 +6,7 @@
 char *CExtensions[] = {".c", ".h", NULL};
 char *CKeywords[] = {
 	"switch", "if", "while", "for", "break", "continue", "return", "else", "struct", "union", "typedef", "static", "enum", "class", "case",
-	"int|", "long|", "double|", "float|", "char|", "unsigned|", "signed|", "void|", NULL //types have a \ at the end
+	"int|", "long|", "double|", "float|", "char|", "unsigned|", "signed|", "void|", NULL //types have a | at the end
 };
 
 char *CppExtensions[] = {".cpp", ".CPP", ".cc", ".cp", ".cxx", ".C", ".hh", ".hpp", NULL};
@@ -191,7 +191,7 @@ char *TextExtensions[] = {".txt", NULL};
 char *BinaryExtensions[] = {".AppImage", NULL};
 char *ShellExtensions[] = {".sh", NULL};
 
-extern Syntax SyntaxDatabase[] = {
+Syntax SyntaxDatabase[] = {
 	{
 		"c",
 		CExtensions,
@@ -347,5 +347,3 @@ extern Syntax SyntaxDatabase[] = {
 		HighlightDigits | HighlightStrings
 	},
 };
-
-#define SyntaxDatabaseEntries (sizeof(SyntaxDatabase) / sizeof(SyntaxDatabase[0])) //track the amount of entries
