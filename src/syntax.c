@@ -347,3 +347,5 @@ Syntax SyntaxDatabase[] = {
 		HighlightDigits | HighlightStrings
 	},
 };
+
+unsigned int SyntaxDatabaseEntries = (sizeof(SyntaxDatabase) / sizeof(SyntaxDatabase[0])); //track the amount of entries

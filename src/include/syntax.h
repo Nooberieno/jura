@@ -49,8 +49,7 @@ extern char *TextExtensions[];
 extern char *ShellExtensions[];
 extern char *BinaryExtensions[];
 
-extern Syntax SyntaxDataBase[];
+extern Syntax SyntaxDatabase[];
 
-#define SyntaxDatabaseEntries (sizeof(SyntaxDatabase) / sizeof(SyntaxDatabase[0])) //track the amount of entries
-
+extern unsigned int SyntaxDatabaseEntries;
 #endif
