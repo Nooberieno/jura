@@ -5,13 +5,13 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include "include/io.h"
-#include "include/config.h"
-#include "include/syntax_highlighting.h"
-#include "include/line_operations.h"
-#include "include/input.h"
-#include "include/output.h"
-#include "include/terminal.h"
+#include <jura/io.h>
+#include <jura/config.h>
+#include <jura/syntax_highlighting.h>
+#include <jura/line_operations.h>
+#include <jura/input.h>
+#include <jura/output.h>
+#include <jura/terminal.h>
 
 char *LinesToString(int *buflen){ //Convert all of the lines into a string
 	int totlen = 0;

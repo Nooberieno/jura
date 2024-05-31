@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "include/syntax.h"
-#include "include/config.h"
+#include <jura/syntax.h>
+#include <jura/config.h>
 
 char *CExtensions[] = {".c", ".h", NULL};
 char *CKeywords[] = {

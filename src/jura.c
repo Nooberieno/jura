@@ -4,13 +4,13 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-#include "include/jura.h"
-#include "include/config.h"
-#include "include/terminal.h"
-#include "include/UserConfig.h"
-#include "include/output.h"
-#include "include/io.h"
-#include "include/input.h"
+#include <jura/jura.h>
+#include <jura/config.h>
+#include <jura/terminal.h>
+#include <jura/UserConfig.h>
+#include <jura/output.h>
+#include <jura/io.h>
+#include <jura/input.h>
 
 
 void init(){ //Intialize the editor config

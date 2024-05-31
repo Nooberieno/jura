@@ -1,4 +1,4 @@
-#include "include/config.h"
+#include <jura/config.h>
 
 
 Config config;

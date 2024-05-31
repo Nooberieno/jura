@@ -2,8 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "include/UserConfig.h"
-#include "include/syntax_highlighting.h"
+#include <jura/UserConfig.h>
+#include <jura/syntax_highlighting.h>
 
 UserConfig UConfig;
 

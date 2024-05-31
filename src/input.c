@@ -2,14 +2,14 @@
 #include <ctype.h>
 #include <unistd.h>
 
-#include "include/input.h"
-#include "include/output.h"
-#include "include/terminal.h"
-#include "include/jura.h"
-#include "include/config.h"
-#include "include/find.h"
-#include "include/editor_operations.h"
-#include "include/io.h"
+#include <jura/input.h>
+#include <jura/output.h>
+#include <jura/terminal.h>
+#include <jura/jura.h>
+#include <jura/config.h>
+#include <jura/find.h>
+#include <jura/editor_operations.h>
+#include <jura/io.h>
 
 char *Prompt(char *prompt, void(*callback)(char *, int)){ //Enter in a prompt and if a callback function is wanted, call it with parameters
 	size_t bufsize = 128;
@@ -31,13 +31,15 @@ char *Prompt(char *prompt, void(*callback)(char *, int)){ //Enter in a prompt an
 			SetStatusMessage("");
 			if(callback) callback(buf, c);
 			return buf;
-		}else if(iscntrl(c) && !(c < 128) && callback) callback(buf, c);
-		else if(buflen == bufsize -1){
-			bufsize *= 2;
-			buf = realloc(buf, bufsize);
+		}else if(!iscntrl(c) && c < 128){
+			if(buflen == bufsize -1){
+				bufsize *= 2;
+				buf = realloc(buf, bufsize);
+			}
+			buf[buflen++] = c;
+			buf[buflen] = '\0';
 		}
-		buf[buflen++] = c;
-		buf[buflen] = '\0';
+		if(callback) callback(buf, c);
 	}
 }
 

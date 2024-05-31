@@ -2,8 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "include/syntax.h"
-#include "include/syntax_highlighting.h"
+#include <jura/syntax.h>
+#include <jura/syntax_highlighting.h>
 
 int is_seperator(int c){ //check if a character is a seperator character
 	return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];{}", c) != NULL;

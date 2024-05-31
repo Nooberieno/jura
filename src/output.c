@@ -4,12 +4,12 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "include/output.h"
-#include "include/config.h"
-#include "include/line_operations.h"
-#include "include/jura.h"
-#include "include/UserConfig.h"
-#include "include/syntax_highlighting.h"
+#include <jura/output.h>
+#include <jura/config.h>
+#include <jura/line_operations.h>
+#include <jura/jura.h>
+#include <jura/UserConfig.h>
+#include <jura/syntax_highlighting.h>
 
 void Scroll(){ //Tells jura what to do in certain scroll edgecases
 	config.renderx = 0;
@@ -115,7 +115,7 @@ void DrawLines(struct buffer *buff){ //Draw the lines to the screen
 }
 
 void DrawStatusBar(struct buffer *buff){ //Set the top status bar
-	AttachBuffer(buff, "\x1b[K", 3);
+	AttachBuffer(buff, "\x1b[7m", 4);
 	char status[80], rstatus[80];
 	int len = snprintf(status, sizeof(status), "%.20s - %d lines %s", config.filename ? config.filename : "[No Name]", config.numlines, config.mod ? "(modified)" : "");
 	int rlen = snprintf(rstatus, sizeof(rstatus), "%s | %d/%d", config.syntax ? config.syntax->filetype : "no filetype detected", config.y + 1, config.numlines);
