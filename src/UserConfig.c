@@ -11,7 +11,7 @@ void DefaultConfig(){ //Sets the default config
 	char *home_dir = getenv("HOME");
 	char config_path[256];
 	strcpy(config_path, home_dir);
-    strcat(config_path, "/config.jura");
+    strcat(config_path, "/.config/config.jura");
 	FILE *file = fopen(config_path, "w");
 	fprintf(file, "%d\n%d\n%d\n%d\n%d\n%d\n%s", 36, 33, 34, 31, 35, 32, "-");
 	fclose(file);
@@ -33,7 +33,7 @@ void LoadConfig(struct UserConfig *config, char *filename){ //Loads a config fil
 		char *home_dir = getenv("HOME");
 		char config_path[256];
 		strcpy(config_path, home_dir);
-    	strcat(config_path, "/config.jura");
+    	strcat(config_path, "/.config/config.jura");
 		FILE *file = fopen(config_path, "r");
 		fscanf(file, "%d\n%d\n%d\n%d\n%d\n%d\n%s", &config->Comment_Color, &config->Keywords_Color, &config->Types_Color, &config->StringColor_, &config->Number_Color, &config->Match_Color, config->First_Char);
 		fclose(file);

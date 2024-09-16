@@ -7,4 +7,6 @@ extern void MoveCursor(int key);
 
 extern void ProcessKeypress();
 
+extern void CleanConfig();
+
 #endif
