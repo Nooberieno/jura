@@ -479,6 +479,8 @@ void SetStatusMessage(const char *fmt, ...);
 void RefreshScreen();
 char *Prompt(char *prompt, void (*callback)(char *, int));
 
+void CleanConfig();
+
 /* terminal */
 
 void die(const char *s){ //error handling function
@@ -1237,6 +1239,19 @@ void MoveCursor(int key){ //Move the cursor according to the user input
 	}
 }
 
+void CleanConfig(){
+	if(config.line){
+		for(int i = 0; i < config.numlines; i++){
+			FreeLine(&config.line[i]);
+		}
+		free(config.line);
+	}
+	free(config.filename);
+	if(config.syntax){
+		free(config.syntax);
+	}
+}
+
 void ProcessKeypress(){ //Tell jura what to do when certain keys are pressed
 	static int quit_times = JuraQuitTimes;
 	int c = ReadKey();
@@ -1252,6 +1267,7 @@ void ProcessKeypress(){ //Tell jura what to do when certain keys are pressed
 		}
 		write(STDOUT_FILENO, "\x1b[2J", 4);
 		write(STDOUT_FILENO, "\x1b[H", 3); 
+		CleanConfig();
 		exit(0); 
 		break;
 	case CTRL_KEY('s'): 
