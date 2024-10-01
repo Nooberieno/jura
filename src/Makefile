@@ -5,8 +5,8 @@ compile: include/buffer.h include/config.h include/editor_operations.h include/f
 	sudo cp include/* /usr/include/jura
 
 install: UserConfig.c config.c syntax.c terminal.c syntax_highlighting.c line_operations.c editor_operations.c io.c find.c buffer.c output.c input.c jura.c
-	$(CC) UserConfig.c config.c syntax.c terminal.c syntax_highlighting.c line_operations.c editor_operations.c io.c find.c buffer.c output.c input.c jura.c -o jura
+	$(CC) UserConfig.c config.c syntax.c terminal.c syntax_highlighting.c line_operations.c editor_operations.c io.c find.c buffer.c output.c input.c jura.c -o jura -std=c99 -D_POSIX_C_SOURCE=200809L
 	sudo mv jura /usr/bin/jura
 
 develop: UserConfig.c config.c syntax.c terminal.c syntax_highlighting.c line_operations.c editor_operations.c io.c find.c buffer.c output.c input.c jura.c
-	$(CC) -g -Og UserConfig.c config.c syntax.c terminal.c syntax_highlighting.c line_operations.c editor_operations.c io.c find.c buffer.c output.c input.c jura.c -Wall -Wextra -Werror -pedantic -o jura
+	$(CC) -g -Og UserConfig.c config.c syntax.c terminal.c syntax_highlighting.c line_operations.c editor_operations.c io.c find.c buffer.c output.c input.c jura.c -Wall -Wextra -Werror -pedantic -o jura -D_POSIX_C_SOURCE=200809L
