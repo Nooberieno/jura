@@ -81,7 +81,7 @@ void MoveCursor(int key){ //Move the cursor according to the user input
 	}
 }
 
-void CleanConfig(){
+void CleanConfig(){ //Free the config to ensure no memory leaks are possible
 	if(config.line){
 		for(int i = 0; i < config.numlines; i++){
 			FreeLine(&config.line[i]);
