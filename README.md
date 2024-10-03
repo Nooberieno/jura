@@ -50,10 +50,9 @@ a list of all features that I want to add to jura
 - changing the copy and paste keybinds to Ctrl + C and Ctrl + V
 ## Not certain yet
 these feature suggestion are **not** confirmed yet, but may be implemented in the future
-- versions of jura made and tested for Windows and MacOS
-- OS detection + specialized keybinds
 - plugins to extend jura's functionality
 - a way to open multiple files and switch between them
+- UTF-8 support
 
 # Contributing
 if you want to learn how to contribute to jura please check out the wiki's [contributing page](https://github.com/Nooberieno/jura/wiki/Contributing)
