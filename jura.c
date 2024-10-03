@@ -1239,7 +1239,7 @@ void MoveCursor(int key){ //Move the cursor according to the user input
 	}
 }
 
-void CleanConfig(){
+void CleanConfig(){ //Free the config memory
 	if(config.line){
 		for(int i = 0; i < config.numlines; i++){
 			FreeLine(&config.line[i]);
