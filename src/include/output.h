@@ -3,28 +3,28 @@
 
 #include "buffer.h"
 
-extern void Scroll();
+void Scroll();
 
-extern void DrawWelcomeMessage(struct buffer *buff);
+void DrawWelcomeMessage(struct buffer *buff);
 
-extern void DrawEmptyLine(struct buffer *buff);
+void DrawEmptyLine(struct buffer *buff);
 
-extern void DrawControlCharacter(struct buffer *buff, char c, int current_color);
+void DrawControlCharacter(struct buffer *buff, char c, int current_color);
 
-extern void DrawNormalCharacter(struct buffer *buff, char c, int *current_color);
+void DrawNormalCharacter(struct buffer *buff, char c, int *current_color);
 
-extern void DrawSyntaxCharacter(struct buffer *buff, char c, int color, int *current_color);
+void DrawSyntaxCharacter(struct buffer *buff, char c, int color, int *current_color);
 
-extern void DrawLine(struct buffer *buff, int fileline);
+void DrawLine(struct buffer *buff, int fileline);
 
-extern void DrawLines(struct buffer *buff);
+void DrawLines(struct buffer *buff);
 
-extern void DrawStatusBar(struct buffer *buff);
+void DrawStatusBar(struct buffer *buff);
 
-extern void DrawMessageBar(struct buffer *buff);
+void DrawMessageBar(struct buffer *buff);
 
-extern void RefreshScreen();
+void RefreshScreen();
 
-extern void SetStatusMessage(const char *fmt, ...);
+void SetStatusMessage(const char *fmt, ...);
 
 #endif

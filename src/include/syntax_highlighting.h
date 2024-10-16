@@ -14,10 +14,10 @@ typedef enum Highlight{ //things that need to be highlighted
 	Match
 }Highlight;
 
-extern int is_seperator(int c);
+int is_seperator(int c);
 
-extern void UpdateSyntax(eline *line);
+void UpdateSyntax(eline *line);
 
-extern void SelectSyntaxHighlight();
+void SelectSyntaxHighlight();
 
 #endif

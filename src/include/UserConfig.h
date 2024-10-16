@@ -13,14 +13,14 @@ typedef struct UserConfig{ //Contains everything that can be configured
 	char First_Char[FirstCharLength];
 }UserConfig;
 
-extern UserConfig UConfig;
+UserConfig UConfig;
 
-extern int SyntaxToColor(int hl);
+int SyntaxToColor(int hl);
 
-extern void DefaultConfig();
+void DefaultConfig();
 
-extern void SaveConfig(struct UserConfig *uconfig, char *filename);
+void SaveConfig(struct UserConfig *uconfig, char *filename);
 
-extern void LoadConfig(struct UserConfig *UConfig, char *filename);
+void LoadConfig(struct UserConfig *UConfig, char *filename);
 
 #endif

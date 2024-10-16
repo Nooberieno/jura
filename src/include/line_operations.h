@@ -3,22 +3,22 @@
 
 #include "config.h"
 
-extern int LineXToRenderx(eline *line, int x);
+int LineXToRenderx(eline *line, int x);
 
-extern int LineRenderxToX(eline *line, int renderx);
+int LineRenderxToX(eline *line, int renderx);
 
-extern void UpdateLine(eline *line);
+void UpdateLine(eline *line);
 
-extern void InsertLine(int at, char *s, size_t len);
+void InsertLine(int at, char *s, size_t len);
 
-extern void FreeLine(eline *line);
+void FreeLine(eline *line);
 
-extern void RemoveLine(int at);
+void RemoveLine(int at);
 
-extern void LineInsertChar(eline *line, int at, int c);
+void LineInsertChar(eline *line, int at, int c);
 
-extern void LineAppendString(eline *line, char *s, size_t len);
+void LineAppendString(eline *line, char *s, size_t len);
 
-extern void LineRemoveChar(eline *line, int at);
+void LineRemoveChar(eline *line, int at);
 
 #endif

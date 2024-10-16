@@ -1,16 +1,16 @@
 #ifndef TERMINAL_H
 #define TERMINAL_H
 
-extern void die(const char *s);
+void die(const char *s);
 
-extern void disableRawMode();
+void disableRawMode();
 
-extern void enableRawMode();
+void enableRawMode();
 
-extern int ReadKey();
+int ReadKey();
 
-extern int getCursorPosition(int *lines, int *cols);
+int getCursorPosition(int *lines, int *cols);
 
-extern int getWindowSize(int *lines, int *cols);
+int getWindowSize(int *lines, int *cols);
 
 #endif

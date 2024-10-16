@@ -8,8 +8,8 @@ typedef struct buffer{
 
 #define StartBuffer {NULL, 0}
 
-extern void AttachBuffer(struct buffer *buff, const char *s, int len);
+void AttachBuffer(struct buffer *buff, const char *s, int len);
 
-extern void FreeBuffer(struct buffer *buff);
+void FreeBuffer(struct buffer *buff);
 
 #endif

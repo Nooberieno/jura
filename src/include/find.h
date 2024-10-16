@@ -1,10 +1,10 @@
 #ifndef FIND_H
 #define FIND_H
 
-extern void FindCallback(char *query, int key);
+void FindCallback(char *query, int key);
 
-extern void Find();
+void Find();
 
-extern void Golf();
+void Golf();
 
 #endif

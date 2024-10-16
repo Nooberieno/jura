@@ -17,8 +17,8 @@ typedef enum Key{
 	PAGE_DOWN
 }Key;
 
-extern void init();
+void init();
 
-extern int main(int argc, char *argv[]);
+int main(int argc, char *argv[]);
 
 #endif
