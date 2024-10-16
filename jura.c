@@ -1336,6 +1336,10 @@ void init(){ //Intialize the editor config
 }
 
 int main(int argc, char *argv[]){ //jura main function that handles startup and file opening
+	printf("%d\n", argc);
+	for(int i = 0; i <= argc; i++){
+		printf("%s\n", argv[i]);
+	}
 	enableRawMode(); 
 	init(); 
 	if(argc >= 2){ 
