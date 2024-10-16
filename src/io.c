@@ -38,7 +38,7 @@ void Open(char *filename){ //Open a file
 	char *line = NULL;
 	size_t linecap = 0;
 	ssize_t lijnen;
-	while((lijnen = getline(&line, &linecap, file)) == -1){
+	while((lijnen = getline(&line, &linecap, file)) != -1){
 		while(lijnen > 0 && (line[lijnen - 1] == '\n' || line[lijnen - 1] == '\r')) lijnen--;
 		InsertLine(config.numlines, line, lijnen);
 	}
