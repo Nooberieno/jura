@@ -117,4 +117,7 @@ release before major rewrites
 small changes the configuration, so that the base/normal color cannot be changed and the config is formated slightly differently
 
 **Bug Fixes**
-fixed a bug where 
+fixed a bug where the normal color did not alter any text and not used at all, it was not supposed to be used
+
+# 4.2 
+this release ensures jura is memory safe, by adding a function that frees the last remaining dangling pointers before the program ends

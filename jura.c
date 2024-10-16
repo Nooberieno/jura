@@ -17,7 +17,7 @@
 
 /* defines used throughout the program */
 
-#define CurrentJuraVersion "4.1" //version that shows on startup
+#define CurrentJuraVersion "4.2" //version that shows on startup
 #define JuraTabStop 8 // how large the tab size is
 #define JuraQuitTimes 1 //how many times needed to close the programing when not saving
 #define CTRL_KEY(k) ((k) & 0x1f) //Control key input shortcut
@@ -1258,6 +1258,19 @@ void MoveCursor(int key){
 	int linelen = line ? line->size : 0;
 	if(config.x > linelen){ //make sure the line is in a possible position on the line
 		config.x = linelen;
+	}
+}
+
+void CleanConfig(){ //Free the config memory
+	if(config.line){
+		for(int i = 0; i < config.numlines; i++){
+			FreeLine(&config.line[i]);
+		}
+		free(config.line);
+	}
+	free(config.filename);
+	if(config.syntax){
+		free(config.syntax);
 	}
 }
 
