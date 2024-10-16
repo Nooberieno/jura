@@ -879,7 +879,7 @@ void Open(char *filename){ //Open a file
 	char *line = NULL;
 	size_t linecap = 0;
 	ssize_t lijnen;
-	while((lijnen = getline(&line, &linecap, file)) == -1){
+	while((lijnen = getline(&line, &linecap, file)) != -1){
 		while(lijnen > 0 && (line[lijnen - 1] == '\n' || line[lijnen - 1] == '\r')) lijnen--;
 		InsertLine(config.numlines, line, lijnen);
 	}
@@ -1336,10 +1336,6 @@ void init(){ //Intialize the editor config
 }
 
 int main(int argc, char *argv[]){ //jura main function that handles startup and file opening
-	printf("%d\n", argc);
-	for(int i = 0; i <= argc; i++){
-		printf("%s\n", argv[i]);
-	}
 	enableRawMode(); 
 	init(); 
 	if(argc >= 2){ 
