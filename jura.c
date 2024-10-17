@@ -1285,6 +1285,7 @@ void ProcessKeypress(){
 		if(config.mod && quit_times > 0){ //if there are any unsaved changed
 			SetStatusMessage("WARNING! File has unsaved changes." "Press Ctrl-Q %d more times to quit", quit_times); //display a warning
 			quit_times--; //decrease number of times allowed to quit without saving
+			CleanConfig();
 			return;
 		}
 		write(STDOUT_FILENO, "\x1b[2J", 4); //clear entire screen
