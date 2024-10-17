@@ -13,7 +13,7 @@ typedef struct UserConfig{ //Contains everything that can be configured
 	char First_Char[FirstCharLength];
 }UserConfig;
 
-UserConfig UConfig;
+extern UserConfig UConfig;
 
 int SyntaxToColor(int hl);
 

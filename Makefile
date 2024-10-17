@@ -14,4 +14,13 @@ $(TARGET): $(SRC) $(HEADERS)
 	$(CC) $(CFLAGS) $(SRC) -o $@
 
 install: $(TARGET)
-	install -m 755 $(TARGET) 
+	install -m 755 $(TARGET) $(INSTALL_DIR)/$(TARGET) 
+
+develop: CFLAGS += -g -Og
+develop: clean $(TARGET)
+
+uninstall:
+	rm -f $(INSTALL_DIR)/$(TARGET) 
+
+clean:
+	rm -f $(TARGET)

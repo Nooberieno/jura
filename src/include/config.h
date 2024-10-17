@@ -41,6 +41,6 @@ typedef struct Config{ //contains everything needed for the editor
 	struct termios og_terminal;
 }Config;
 
-Config config;
+extern Config config;
 
 #endif
