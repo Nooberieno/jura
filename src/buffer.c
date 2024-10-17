@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <jura/buffer.h>
+#include "include/buffer.h"
 
 void AttachBuffer(struct buffer *buff, const char *s, int len){ //Attach a character to a buffer
 	char *new = realloc(buff->b, buff->len + len);

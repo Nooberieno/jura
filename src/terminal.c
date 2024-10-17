@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <jura/config.h>
-#include <jura/jura.h>
-#include <jura/terminal.h>
+#include "include/config.h"
+#include "include/jura.h"
+#include "include/terminal.h"
 
 void die(const char *s){ //if an error occurers, reset the terminal settings, sow the error and exit the program
 	write(STDOUT_FILENO, "\x1b[2J", 4); 

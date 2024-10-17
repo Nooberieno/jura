@@ -1,5 +1,5 @@
-#include <jura/editor_operations.h>
-#include <jura/line_operations.h>
+#include "include/editor_operations.h"
+#include "include/line_operations.h"
 
 void InsertChar(int c){ //Insert a character into a line and update the X coordinate for the cursor
 	if(config.y == config.numlines) InsertLine(config.numlines, "", 0);

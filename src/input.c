@@ -2,15 +2,15 @@
 #include <ctype.h>
 #include <unistd.h>
 
-#include <jura/input.h>
-#include <jura/output.h>
-#include <jura/terminal.h>
-#include <jura/jura.h>
-#include <jura/config.h>
-#include <jura/find.h>
-#include <jura/editor_operations.h>
-#include <jura/io.h>
-#include <jura/line_operations.h>
+#include "include/input.h"
+#include "include/output.h"
+#include "include/terminal.h"
+#include "include/jura.h"
+#include "include/config.h"
+#include "include/find.h"
+#include "include/editor_operations.h"
+#include "include/io.h"
+#include "include/line_operations.h"
 
 char *Prompt(char *prompt, void(*callback)(char *, int)){ //Enter in a prompt and if a callback function is wanted, call it with parameters
 	size_t bufsize = 128;

@@ -4,12 +4,12 @@
 #include <ctype.h>
 #include <string.h>
 
-#include <jura/output.h>
-#include <jura/config.h>
-#include <jura/line_operations.h>
-#include <jura/jura.h>
-#include <jura/UserConfig.h>
-#include <jura/syntax_highlighting.h>
+#include "include/output.h"
+#include "include/config.h"
+#include "include/line_operations.h"
+#include "include/jura.h"
+#include "include/UserConfig.h"
+#include "include/syntax_highlighting.h"
 
 void Scroll(){ //Tells jura what to do in certain scroll edgecases
 	config.renderx = 0;

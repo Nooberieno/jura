@@ -1,13 +1,13 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <jura/find.h>
-#include <jura/config.h>
-#include <jura/jura.h>
-#include <jura/syntax_highlighting.h>
-#include <jura/input.h>
-#include <jura/output.h>
-#include <jura/line_operations.h>
+#include "include/find.h"
+#include "include/config.h"
+#include "include/jura.h"
+#include "include/syntax_highlighting.h"
+#include "include/input.h"
+#include "include/output.h"
+#include "include/line_operations.h"
 
 void FindCallback(char *query, int key){ //Find every sequence that matches the query and move between them
 	static int last_match = -1;

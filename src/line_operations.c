@@ -1,9 +1,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <jura/syntax_highlighting.h>
-#include <jura/config.h>
-#include <jura/jura.h>
+#include "include/syntax_highlighting.h"
+#include "include/config.h"
+#include "include/jura.h"
 
 int LineXToRenderx(eline *line, int x){ //Calculate which X coordinate we need to render the cursor at from the X coordinate
 	int renderx = 0;
